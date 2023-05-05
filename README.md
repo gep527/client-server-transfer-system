@@ -1,92 +1,188 @@
-# Final Stage
+# CSE109 - Systems Software - Spring 2023
 
+# Final Exam
 
+**Due Date: **
 
-## Getting started
+## Ethics Contract
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+**FIRST**: Please read the following carefully:
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+- I have not received, I have not given, nor will I give or receive, any assistance to another student taking this exam, including discussing the exam with students in another section of the course. Do not discuss the exam after you are finished until final grades are submitted.
+- If I use any resources (including text books and online references and websites), I will cite them in my assignment.
+- I will not ask question about how to debug my exam code on Piazza or any other platform.
+- I will not plagiarize someone else's work and turn it in as my own. If I use someone else's work in this exam, I will cite that work. Failure to cite work I used is plagiarism.
+- I understand that acts of academic dishonesty may be penalized to the full extent allowed by the [Lehigh University Code of Conduct][0], including receiving a failing grade for the course. I recognize that I am responsible for understanding the provisions of the Lehigh University Code of Conduct as they relate to this academic exercise.
 
-## Add your files
+If you agree with the above, type your full name in the following space along with the date. Your exam **will not be graded** without this assent. When you are done, **make your first commit with the commit message: `I, <your full name here>, agree to the ethics contract`.**
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+Write your name and date between the lines below
+
+---------------------------------------------
+
+---------------------------------------------
+
+## Exam Prelude
+
+**Read thoroughly before starting your exam:**
+
+### Instructions 
+
+1. Fork this repository into your CSE109 project namespace. [Instructions](https://docs.gitlab.com/ee/workflow/forking_workflow.html#creating-a-fork)
+2. Clone your newly forked repository onto your development machine. [Instructions](https://docs.gitlab.com/ee/gitlab-basics/start-using-git.html#clone-a-repository) 
+3. As you are writing code you should commit patches along the way. *i.e.* don't just submit all your code in one big commit when you're all done. Commit your progress as you work. **You should make at least one commit per question.**
+4. When you've committed all of your work, there's nothing left to do to submit the assignment.
+
+### Commit Policy
+
+This exam is divided into discrete "questions", and you must make at least one commit per question. This is how I will know you are not just copying and pasting an entire solution from the internet. I will be able to see how much time you spend on each question based on your commit times. Red flags are raised when certain patterns of behavior indicating cheating are exhibited by your commit activity. 
+
+You can do the questions in any order, and you can go back to questions for which you have already made a commit, but I want you to have at least one commit per question. The commit message for each question should be "QUESTION N" where N is the number of the question.
+
+### Resource Usage Policy
+
+You are free to use any resource for this exam. This includes books, notes, lecture videos, documentation, the internet, Stack Overflow, etc. The only course resources off limits are me and your TAs. I am free to answer clarifying questions, but that's it. I can't help you debug or provide any technical support (this includes support with git. Knowing how to use git is part of this exam.)
+
+If you use any resources from the internet or anywhere else, **YOU HAVE TO CITE THEM** in your exam. Failure to cite resources you used may lead to failure of the exam. This includes the wiki article and videos I posted above. If you use them, cite them every time you use them. See the Works Cited section at the bottom for more details on how to cite your work in this document using Markdown.
+
+## Assignment
+
+For this exam, you will be writing the server half of a client/server pair that will communicate over Unix sockets. The pair is:
+
+1. File Server - A file server is a program that hosts files for clients. It receives files that clients want to store, and sends them back to the client (or other clients) when they are requested. This is what you will be writing for this assignment. A compiled file server binary has been provided for you in the `bin` directory. You can use it as a reference for this exam.
+
+2. Client - This program connects to the server and can send files to it, which will be stored on the file server. The client can also request files from the file server. A compiled client binary has been provided for you in the `bin` directory as well.
+
+## File Server
+
+The file server program must accept the following flag:
+
+1. `--hostname address:port` - Where `address` is a 32 bit IP address, and `port` is the desired port of the file server.
+
+If you call the program without a `--hostname`, it should use the default of `localhost:8081`.
+
+---
+
+- Q2-1. The server will start, bind a socket to a port, and listen for a connection.
+- Q2-2. The server will create an empty hash map to store received files in memory.
+  - You have to write the hash map yourself. You can't use a library that you did not write. You can use your Homework 6 code or the posted solution as a starting point. Remember to cite this code if you use it. If you look at any source for help, be sure to cite it.
+  - The hash map will use the filename string as a key, and the file as a value (this can be either the received `File`, or the file data `vector<u8>`).
+  - The hashmap will act much like the hash set, except it will have two additional methods:
+    - Q2-3. `bool insert(String key, File value);` - inserts the k/v pair into the hash map. Returns true if the key already existed, and replaces the stored value with the supplied value. Returns false if the key did not exist already.
+    - Q2-4. `File get(String key);` - Returns the file associated with the supplied key. If the key doesn't exist, this function throws an exception.
+- When the server receives a connection, it will enter an infinite loop.
+  - This loop will attempt to receive data from the client. When it receives a message, it will follow the following steps:
+    - Q2-5. Read the message to a buffer
+    - Q2-6. Decrypt the message using a simple XOR encryption scheme. The key is `42`.
+    - Q2-7. Deserialize the message to the appropriate struct, either a `File` or `Request`.
+      - Q2-8. If the message is a `File`, then the server will insert the filename and file into the hash map.
+      - Q2-9.If the message is a `Request`, then the server will look for the requested file in hash map. 
+        - If the requested file does not exist, nothing will be sent back to the client.
+        - Q2-10. If the file does exist it will be serialized into a `File` message, encrypted, and sent to the client.
+  - After servicing this message, the file server will loop and wait for a new message from the client.
+  - The file server will not terminate until the user terminates the program or the client terminates the connection.
+  - To properly test this cut of the file server, you will have to modify your client to be able to send multiple messages without terminating the connection.
+
+## Message Protocol
+
+### Serialized File
+
+If you have a file called `file.txt` with the contents `Hello`, then the serialzied, unencrypted message should look like this:
 
 ```
-cd existing_repo
-git remote add origin http://gitlab.cse.lehigh.edu/cse109-systems-software/spring-2023/graders/final-stage.git
-git branch -M main
-git push -uf origin main
+┌───────────────────────────────────────────────────────────────────────────────┐
+│0xae     // map tag                                                            │
+│0x01     // 1 kv pair                                                          │
+├───────────────────────────────────────────────────────┬───────────┬───────────┤
+│0xaa     // string8 tag                                │           │           │
+│0x04     // 4 characters                               │ key       │           │
+│File     // the string "File"                          │           │           │
+├───────────────────────────────────────────────────────┼───────────┤  pair 1   │
+│0xae     // the value associated with the key is a map │           │           │
+│0x02     // 2 kv pairs                                 │           │           │
+├────────────────────────────────┬───────────┬──────────┤           │           │
+│0xaa     // string8 tag         │           │          │           │           │
+│0x04     // 4 characters        │ key       │          │           │           │
+│name     // the string "name"   │           │          │           │           │
+├────────────────────────────────┼───────────┤ pair 1   │           │           │
+│0xaa     // string8 tag         │           │          │           │           │
+│0x08     // 8 characters        │ value     │          │           │           │
+│file.txt // the filename        │           │          │           │           │
+├────────────────────────────────┼───────────┼──────────┤           │           │
+│0xaa     // string8 tag         │           │          │ value     │           │
+│0x05     // 5 characters        │ key       │          │           │           │
+│bytes    // the string "bytes"  │           │          │           │           │
+├────────────────────────────────┼───────────┤ pair 2   │           │           │
+│0xac     // array8 tag          │ value     │          │           │           │
+│0x05     // 5 elements          │           │          │           │           │
+|0xa2     // unsigned byte tag   │           │          │           │           │
+│H        // a byte              │           │          │           │           │
+|0xa2     // unsigned byte tag   │           │          │           │           │
+│e        // a byte              │           │          │           │           │
+|0xa2     // unsigned byte tag   │           │          │           │           │
+│l        // a byte              │           │          │           │           │
+|0xa2     // unsigned byte tag   │           │          │           │           │
+│l        // a byte              │           │          │           │           │
+|0xa2     // unsigned byte tag   │           │          │           │           │
+│o        // a byte              │           │          │           │           │
+└────────────────────────────────┴───────────┴──────────┴───────────┴───────────┘           
 ```
 
-## Integrate with your tools
+In decimal:
+```
+[174, 1, 170, 4, 70, 105, 108, 101, 174, 2, 170, 4, 110, 97, 109, 101, 170, 8, 102, 105, 108, 101, 46, 116, 120, 116, 170, 5, 98, 121, 116, 101, 115, 172, 5, 162, 72, 162, 101, 162, 108, 162, 108, 162, 111]
+```
 
-- [ ] [Set up project integrations](http://gitlab.cse.lehigh.edu/cse109-systems-software/spring-2023/graders/final-stage/-/settings/integrations)
+### Serialized Request
 
-## Collaborate with your team
+If you have a file called `file.txt` that you are requesting, then the unencrypted message should look like this:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+```
+┌───────────────────────────────────────────────────────────────────────────────┐
+│0xae     // map tag                                                            │
+│0x01     // 1 kv pair                                                          │
+├───────────────────────────────────────────────────────┬───────────┬───────────┤
+│0xaa     // string8 tag                                │           │           │
+│0x07     // 7 characters                               │ key       │           │
+│Request  // the string "Request"                       │           │           │
+├───────────────────────────────────────────────────────┼───────────┤  pair 1   │
+│0xae     // the value associated with the key is a map │           │           │
+│0x01     // 1 kv pair                                  │           │           │
+├──────────────────────────────┬───────────┬────────────┤           │           │
+│0xaa     // string8 tag       │           │            │           │           │
+│0x04     // 4 characters      │ key       │            │ value     │           │
+│name     // the string "name" │           │            │           │           │
+├──────────────────────────────┼───────────┤ pair 1     │           │           │
+│0xaa     // string8 tag       │           │            │           │           │
+│0x08     // 8 characters      │ value     │            │           │           │
+│file.txt // the filename      │           │            │           │           │
+└──────────────────────────────┴───────────┴────────────┴───────────┴───────────┘           
+```
 
-## Test and Deploy
+In decimal:
+```
+[174, 1, 170, 7, 82, 101, 113, 117, 101, 115, 116, 174, 1, 170, 4, 110, 97, 109, 101, 170, 8, 102, 105, 108, 101, 46, 116, 120, 116]
+```
 
-Use the built-in continuous integration in GitLab.
+## Video Explanation
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+This is the oral portion of the exam. You will record an explanation for your file server, and demonstrate that it works with the client that you wrote. 
 
-***
+**Important The first thing you say in your exam should be which cut you attempted.**
 
-# Editing this README
+To demonstrate your file server working, it's sufficient to show the client sending a file (any file) to the server, the server acknowledging its receipt, and then to show the client requesting it again and saving it to disk. If you did not successfully write the client, you may demonstrate your file server working with the example client binary.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+If you didn't get either the file server or client working, explain how you attempted to solve this exam and where you got stuck. Show off any code you did write. This will get you full credit for this portion.
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+You can use Zoom to do this, [here is a link][3] to some instructions. You don't have to record your face, only your voice and the screen. Go through your code and explain how you the important parts (important is subjective here. Usually the important bits are the ones you spent the most time on or had the most difficulty with). Your goal with this section is to convince me you know what you are talking about, so I want you to do this without reading a script or written answer. When you are done, upload your recording to your final exam repository.
 
-## Name
-Choose a self-explaining name for your project.
+Recording Link(s):
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## Works Cited
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+Include a list of websites and resources you used to complete this exam. Make a numbered list, and at the place where you used this resource cite it using [reference style links in Markdown][1] (See this Readme's source for an example. It's invisible in the rendered document, but there are a number of links below this paragraph).
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+[0]: https://studentaffairs.lehigh.edu/content/code-conduct
+[1]: https://www.markdownguide.org/basic-syntax#reference-style-links
+[2]: http://crasseux.com/books/ctutorial/Building-a-library.html#Building%20a%20library
+[3]: https://support.zoom.us/hc/en-us/articles/201362473-Local-recording
