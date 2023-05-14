@@ -53,6 +53,14 @@ For this exam, you will be writing the server half of a client/server pair that 
 
 2. Client - This program connects to the server and can send files to it, which will be stored on the file server. The client can also request files from the file server. A compiled client binary has been provided for you in the `bin` directory as well.
 
+The client can be used with the following flags:
+
+```
+--hostname address:port
+--send filename
+--request filename
+```
+
 ## File Server
 
 The file server program must accept the following flag:
