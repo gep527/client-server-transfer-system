@@ -204,6 +204,10 @@ You can use Zoom to do this, [here is a link][3] to some instructions. You don't
 
 Recording Link(s):
 
+## Evaluation
+
+Your exam will be evaluated against the Programming Assignment Grading Rubric: https://docs.google.com/document/d/1V0nBt3Rz6uFMZ9mIaFioLF-48DFX0VdkbgRUDM_eIFk/edit
+
 ## Works Cited
 
 Include a list of websites and resources you used to complete this exam. Make a numbered list, and at the place where you used this resource cite it using [reference style links in Markdown][1] (See this Readme's source for an example. It's invisible in the rendered document, but there are a number of links below this paragraph).
