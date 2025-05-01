@@ -317,7 +317,7 @@ There are three versions of the server you can implement,  depending on the time
 
 You only have to do one. The easy version has more content from the beginning of the course, while the harder version are weighted more toward newer content.
 
-- Easy (B+ 85%) - A basic server that can receive files and send them back to the client. 
+- Easy (B 85%) - A basic server that can receive files and send them back to the client. 
     - Handles small files
     - Stores files in-memory and does not persist them, so they are lost when the server is terminated.
     - Handles one client connection at a time
@@ -332,7 +332,7 @@ You only have to do one. The easy version has more content from the beginning of
 
 You can start in easy mode and work your way up to medium or hard if you have time, but this might requrie you to refactor your code as you go. Alternatively you can start in hard mode and work your way down if you find yourself getting stuck.
 
-### Easy Server (B+ 85%)
+### Easy Server (B 85%)
 
 **Max file size:** 255 bytes
 
