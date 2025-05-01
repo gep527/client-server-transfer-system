@@ -332,7 +332,7 @@ You only have to do one. The easy version has more content from the beginning of
 
 You can start in easy mode and work your way up to medium or hard if you have time, but this might requrie you to refactor your code as you go. Alternatively you can start in hard mode and work your way down if you find yourself getting stuck.
 
-### Easy Server (B 85%)
+### 😸 Easy Server (B 85%)
 
 **Max file size:** 255 bytes
 
@@ -342,8 +342,6 @@ The easy file server program must accept the following flag:
     - If you call the program without this flag, it defaults to `localhost:8081`.
 
 ---
-
-#### Program Specification
 
 The easy file server program will implement the following functionality:
 
@@ -373,7 +371,7 @@ The easy file server program will implement the following functionality:
   - After servicing a message, the file server will loop and wait for a new message from the client.
   - The file server will not terminate until the user terminates the program.
 
-### Medium Server (A 95%)
+### 😼 Medium Server (A 95%)
 
 **Max file size**: 65,535 bytes
 
@@ -399,7 +397,7 @@ The medium server will implement all of the requirements of the easy server, wit
     - The server will read the hash map from the specified file if it exists, and populate the in-memory hash map with the contents of the file.
     - If the file cannot be read due to permission issues or other errors, the server should terminate with an error message.
 
-### Hard Server (A+ 100%)
+### 🙀 Hard Server (A+ 100%)
 
 **Max file size**: 65,535 bytes
 
