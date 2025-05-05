@@ -18,7 +18,7 @@
 If you agree with the above, type your full name next to the pen emoji, along with the date. Your exam **will not be graded** without this assent.
 
 ---------------------------------------------
-🖋️
+🖋️ Gwenn Peckham 4/5/2025
 ---------------------------------------------
 
 💥 **IMPORTANT:** When you are done, make your first commit with the commit message: `I, <your full name here>, agree to the ethics contract`.
