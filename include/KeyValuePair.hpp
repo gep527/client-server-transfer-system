@@ -1,22 +1,24 @@
+#include <cstring>
+typedef std::string string;
 class KeyValuePair{
     private:
         //data members
-        int key;
+        string key;
         int value; 
     public:
         //constructor
-        KeyValuePair(int k, int v){
+        KeyValuePair(string k, int v){
             key = k;
             value = v;
         }
         //deconstructor
         ~KeyValuePair(){
-            key = 0;
+            key = "";
             value = 0;
         }
 
         //accessor for Key
-        int getKey(){
+        string getKey(){
             return key;
         }
 
@@ -26,7 +28,7 @@ class KeyValuePair{
         }
 
         //setter for Key
-        void setKey(int k){
+        void setKey(string k){
             key = k;
         }
 

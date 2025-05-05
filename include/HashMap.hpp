@@ -1,6 +1,7 @@
 #include <cstddef>
 #include "../include/KeyValuePair.hpp"
 #include "./linkedlist.hpp"
+#include <cstring>
 
 class HashMap {
   private:
@@ -30,23 +31,23 @@ class HashMap {
     ~HashMap();
 
     // Generate a prehash for an item
-    unsigned long prehash(int item) const;
+    unsigned long prehash(string item) const;
 
     // Convert prehash value into a valid bucket index
     unsigned long hash(unsigned long prehash) const;
 
     // Insert item into the set. Returns true if inserted, false if already present.
     // Rehashes if inserting will increase the load factor past the threshold.
-    bool insert(int key, int value);
+    bool insert(string key, int value);
 
     // Remove an item from the set. Returns true if removed, false if not found.
-    bool remove(int key);
+    bool remove(string key);
 
     // Check if the item exists in the set, and returns a keyvalue pair pointer if found
-    KeyValuePair* contains(int item) const;
+    KeyValuePair* contains(string item) const;
 
     //returns value associated with key. Returns true if found, false if not
-    bool get(int key, int&value_out) const;
+    bool get(string key, int&value_out) const;
 
     // Return the number of elements in the hash set
     size_t count() const;

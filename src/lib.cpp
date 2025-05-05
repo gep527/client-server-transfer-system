@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream> 
 #include <cstdint>
+#include <cstring>
 #include "../include/HashMap.hpp"
 
     /*
@@ -147,15 +148,18 @@
     The constant 5381 is the starting value of the hash, and it is chosen because prime numbers like it are commonly used in hashing algorithms to reduce collisions.
     */
 
-    unsigned long HashMap:: prehash(int item) const{
+    unsigned long HashMap:: prehash(string item) const{
         unsigned long h = 5381; // Starting hash value, chosen for its good distribution properties in hashing algorithms
-        unsigned char* ptr = reinterpret_cast<unsigned char*>(&item); // Cast the integer to a sequence of bytes
+        //unsigned char* ptr = reinterpret_cast<unsigned char*>(&item); // Cast the integer to a sequence of bytes
 
         // Loop through each byte (digit) of the integer and update the hash value
-        for (size_t i = 0; i < sizeof(int); ++i) {
-            unsigned char c = ptr[i]; // Get the byte at position i
-            h = ((h << 5) + h) + c;   // Update the hash value: h * 33 + c
+        for (char c : item){
+            h = ((h << 5) + c);
         }
+        // for (size_t i = 0; i < item.size(); ++i) {
+        //     unsigned char c = ptr[i]; // Get the byte at position i
+        //     h = ((h << 5) + h) + c;   // Update the hash value: h * 33 + c
+        // }
 
         return h; // Return the final computed hash value
     }
@@ -173,7 +177,7 @@
        double the size of the hash table and rehash all elements.
     */
   
-    bool HashMap:: insert(int key, int value) {
+    bool HashMap:: insert(string key, int value) {
       int index = hash(prehash(key)); //Compute the bucket index
       KeyValuePair* kvp = contains(key); //finds the pointer to the Key Value Pair if it is in the HashSet
     
@@ -241,7 +245,7 @@
     */
 
 
-    bool HashMap:: remove(int key) {
+    bool HashMap:: remove(string key) {
 
       int index = hash(prehash(key)); //Find the bucket
       KeyValuePair* kvp = contains(key); //finds the pointer to the Key Value Pair if it is in the HashSet
@@ -295,7 +299,7 @@
     ---------------------------------
     */
 
-    bool HashMap::get(int key, int&value_out) const{
+    bool HashMap::get(string key, int&value_out) const{
       int index = hash(prehash(key)); //Hash to find the bucket
     
       Node* current = array[index]->head; //Will get the linkedlist and set the head equal to the current node
@@ -317,7 +321,7 @@
       will return a Key Value Pair pointer 
     */
 
-    KeyValuePair* HashMap::contains(int key) const{ 
+    KeyValuePair* HashMap::contains(string key) const{ 
       int index = hash(prehash(key)); //Hash to find the bucket
       Node* current = array[index]->head; //Will get the linkedlist and set the head equal to the current node 
       while (current != NULL){ //will iterate through the LL
