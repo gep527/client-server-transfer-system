@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <cstring>
 #include "../include/HashMap.hpp"
+#include <vector>
 
     /*
       The `rehash` function resizes the hash table by creating a new array with a different number of buckets,
@@ -177,7 +178,7 @@
        double the size of the hash table and rehash all elements.
     */
   
-    bool HashMap:: insert(string key, int value) {
+    bool HashMap:: insert(string key, File value) {
       int index = hash(prehash(key)); //Compute the bucket index
       KeyValuePair* kvp = contains(key); //finds the pointer to the Key Value Pair if it is in the HashSet
     
@@ -299,7 +300,7 @@
     ---------------------------------
     */
 
-    bool HashMap::get(string key, int&value_out) const{
+    bool HashMap::get(string key, File&value_out) const{
       int index = hash(prehash(key)); //Hash to find the bucket
     
       Node* current = array[index]->head; //Will get the linkedlist and set the head equal to the current node
@@ -428,7 +429,16 @@
 
         while (current != NULL){ //if not it will print everything in the bucket
           KeyValuePair* pair = (KeyValuePair*)(current->item);
-          std::cout << " [ " << pair->getKey()<< ", " << pair->getValue() << " ]"; //prints the key and value
+          std::cout << " [ " << pair->getKey()<< ", "; //prints the key (string)
+
+          //prints key
+          File fileTemp = pair->getValue(); //gets value and stores it on a temp val
+          std::cout << "{ ";
+          for (int i  = 0; i < fileTemp.size(); i++){ //prints each value in the File value
+            std::cout << fileTemp[i]; 
+          }
+          std::cout  << "} ]";
+
           current = current->next; //iterate through the LL
         }
         std::cout << " " << std::endl;

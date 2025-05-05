@@ -1,20 +1,26 @@
+//intializing string for the key
 #include <cstring>
 typedef std::string string;
+//initalizing the vector<v8> file for the value
+#include <vector>
+typedef unsigned char u8;
+typedef std::vector<u8> File;
+
 class KeyValuePair{
     private:
         //data members
         string key;
-        int value; 
+        File value; 
     public:
         //constructor
-        KeyValuePair(string k, int v){
+        KeyValuePair(string k, File v){
             key = k;
             value = v;
         }
         //deconstructor
         ~KeyValuePair(){
             key = "";
-            value = 0;
+            value = {};
         }
 
         //accessor for Key
@@ -23,7 +29,7 @@ class KeyValuePair{
         }
 
         //acessor for Value 
-        int getValue(){
+        File getValue(){
             return value;
         }
 
@@ -33,7 +39,7 @@ class KeyValuePair{
         }
 
         //setter for value
-        void setValue(int v){
+        void setValue(File v){
             value = v;
         }
 };
