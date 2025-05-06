@@ -13,6 +13,8 @@
 #include <cstring>
 #include <chrono>
 #include "../include/HashMap.hpp"
+#include "../include/pack109.hpp"
+#include <vector>
 
 int main( int argc, char *argv[] ) {
    int sockfd, newsockfd, portno;
@@ -96,6 +98,16 @@ int main( int argc, char *argv[] ) {
       for (u8 bytes : recieved){
          u8 decrypt = bytes ^ 42; //XOR by the key (42)
          decrypted.push_back(decrypt);
+      }
+
+      //Question 7:
+      int size_key = decrypted[3]; //where the size of the key is stored (make it an int to compare)
+      if (size_key == 4){ //means that the key should be a File, will check in deserialization
+         struct FileStruct file_deser = pack109::deserialize_file(decrypted); //creates a file struct
+      } else if (size_key == 8){ //means that the key should be a Request, will check in deserialization
+         struct Request request_deser = pack109::deserialize_request(decrypted); //creates a request struct
+      } else{
+         throw; //undentified
       }
 
       
