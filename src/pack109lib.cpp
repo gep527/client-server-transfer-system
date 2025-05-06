@@ -870,6 +870,7 @@ std::vector<string> pack109:: deserialize_vec_string(vec bytes){
 
 //   return result; 
 // }
+//SERIALZING THE FILE STRUCT ----------------------------------
 vec pack109::serialize(struct FileStruct item){
   vec bytes;
   bytes.push_back(PACK109_M8);
@@ -894,6 +895,7 @@ vec pack109::serialize(struct FileStruct item){
   return bytes;
 }
 
+//DESERIALZING THE FILE STRUCT ----------------------------------
 struct FileStruct pack109::deserialize_file(vec bytes){
   if (bytes.size() < 8){ //making sure there is enough room for File to be the key
     throw;
@@ -920,6 +922,27 @@ struct FileStruct pack109::deserialize_file(vec bytes){
   struct FileStruct deserialized_file = {file_name, file_bytes};
 
   return deserialized_file;
+}
+
+
+vec pack109::serialize(struct Request item){
+  vec bytes;
+  bytes.push_back(PACK109_M8);
+  bytes.push_back(0x01); //1 KVP
+  //std::cout << bytes.size() << std::endl;
+  //key is Request
+  vec request = serialize(string("Request"));
+  bytes.insert(end(bytes), begin(request), end(request));
+  //value is is an m8
+  bytes.push_back(PACK109_M8);
+  bytes.push_back(0x01); //2 KVP
+  //KVP 1 is "name"
+  vec namek = serialize(string("name"));
+  bytes.insert(end(bytes), begin(namek), end(namek));
+  vec namev = serialize(item.name);
+  bytes.insert(end(bytes), begin(namev), end(namev));
+
+  return bytes;
 }
 
 

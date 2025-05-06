@@ -33,8 +33,12 @@ typedef std::string string;
 #define PACK109_M16   0xaf
 
 struct FileStruct {
-  string name;
-  vec bytes;
+  string name;//name of file
+  vec bytes; //contents
+};
+
+struct Request{
+  string name; //name of file
 };
 
 namespace pack109 {
@@ -93,9 +97,13 @@ namespace pack109 {
   std::vector<string> deserialize_vec_string(vec bytes);
 
   // Maps
+  //File
   vec serialize(struct FileStruct item);
   struct FileStruct deserialize_file(vec bytes);
-//   struct Person deserialize_person(vec bytes);
+
+  //Request
+  vec serialize(struct Request item);
+  struct Request deserialize_request(vec bytes);
 
 }
 
