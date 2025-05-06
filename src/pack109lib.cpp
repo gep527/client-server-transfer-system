@@ -989,6 +989,28 @@ vec pack109::serialize(struct Status item){
   return bytes;
 }
 
+//DESERIALZING THE STATUS STRUCT ----------------------------------
+struct Status pack109::deserialize_status(vec bytes){
+  if (bytes.size() < 10){ //making sure there is enough room for Status to be the key
+    throw;
+  }
+
+  vec status_slice = slice(bytes, 2, 9);
+  string status_string = deserialize_string(status_slice);
+  if (status_string != "Status"){
+    throw;
+  }
+
+  //message
+  u8 message_len = bytes[22]; //assuming file name length is fewer than 256 which is safe to assume
+  vec messagev = slice(bytes, 21, (21 + message_len + 1));
+  string message = deserialize_string(messagev);
+
+  struct Status deserialized = {message};
+
+  return deserialized;
+}
+
 
 //PRINTING
 void pack109::printVec(vec &bytes) {

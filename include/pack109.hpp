@@ -111,7 +111,7 @@ namespace pack109 {
 
   //Status
   vec serialize(struct Status item);
-  struct Status deseralize_status(vec bytes);
+  struct Status deserialize_status(vec bytes);
 
 }
 
