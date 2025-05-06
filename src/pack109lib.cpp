@@ -6,6 +6,17 @@
 using std::begin;
 using std::end;
 
+vec pack109::slice(const vec& bytes, int vbegin, int vend) {
+  if (vbegin < 0 || vend >= (int)bytes.size() || vbegin > vend) {
+      throw std::out_of_range("slice: invalid indices. asked for slice(" + std::to_string(vbegin) + ", " + std::to_string(vend) + 
+          "), but vector size is " + std::to_string(bytes.size()));
+  }
+
+  auto start = bytes.begin() + vbegin;
+  auto end   = bytes.begin() + vend + 1; // inclusive
+  return vec(start, end);
+}
+
 //TEST BOOL -------------------------------------------------------
 vec pack109::serialize(bool item) {
   vec bytes;
@@ -444,6 +455,7 @@ std::vector<u8> pack109::deserialize_vec_u8(vec bytes){
     len = (bytes[1] << 8 | bytes[2]); 
     place = 3;
   } else { //invalid tag
+    std::cout << tag << std::endl;
     throw;
   }
 
@@ -880,6 +892,34 @@ vec pack109::serialize(struct FileStruct item){
   bytes.insert(end(bytes), begin(bytesv), end(bytesv));
 
   return bytes;
+}
+
+struct FileStruct pack109::deserialize_file(vec bytes){
+  if (bytes.size() < 8){ //making sure there is enough room for File to be the key
+    throw;
+  }
+
+  vec file_slice = slice(bytes, 2, 7);
+  string file_string = deserialize_string(file_slice);
+  if (file_string != "File"){
+    throw;
+  }
+
+  //file name
+  u8 file_name_len = bytes[17]; //assuming file name length is fewer than 256 which is safe to assume
+  vec file_namev = slice(bytes, 16, (16 + file_name_len + 1));
+  string file_name = deserialize_string(file_namev);
+
+  //file contents 
+  int place = 16 + file_name_len + 1;
+  place += 8; //skipping sting tag (1), length of bytes string (1), and chars that make up bytes (5), then get to tag 1+1+5=7+1 = 8
+  u8 file_len = bytes[place + 1]; //assuming file is less than 256 
+  vec file_contentsv = slice(bytes, place, (place + file_len + 1));
+
+  std::vector<u8> file_bytes = deserialize_vec_u8(file_contentsv);
+  struct FileStruct deserialized_file = {file_name, file_bytes};
+
+  return deserialized_file;
 }
 
 

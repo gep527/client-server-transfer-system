@@ -39,6 +39,8 @@ struct FileStruct {
 
 namespace pack109 {
 
+  vec slice(const vec& bytes, int vbegin, int vend);
+  
   void printVec(vec &bytes);
 
   // Boolean
@@ -92,6 +94,7 @@ namespace pack109 {
 
   // Maps
   vec serialize(struct FileStruct item);
+  struct FileStruct deserialize_file(vec bytes);
 //   struct Person deserialize_person(vec bytes);
 
 }
