@@ -50,6 +50,11 @@ class HashMap {
     //returns value associated with key. Returns true if found, false if not
     bool get(string key, File&value_out) const;
 
+    //NEW METHOD
+    //Returns the file associated with the supplied key. If the key doesn't exist, this function throws an exception
+    File get(string key);
+
+
     // Return the number of elements in the hash set
     size_t count() const;
 

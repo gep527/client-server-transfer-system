@@ -418,6 +418,32 @@
       element_count=0; 
     }
 
+    //NEW METHOD FILE GET
+    File HashMap::get(string key){
+      int index = hash(prehash(key)); //hash to find the bucket
+
+      bool notFound = true;
+      File value_out; //stores the File if found for associated key
+
+      Node* current = array[index]->head; //will get the LL and set the head equal to the first value
+      while (current != NULL){ //will iterate throught the LL
+
+        KeyValuePair* kvp = (KeyValuePair*)current->item; //casts as KVP
+        if (kvp->getKey() == key){
+          value_out = kvp->getValue(); //getting the value associated with the key
+          notFound = false; //sets it equal to false, because it was found
+        }
+
+        current = current->next; //iterates 
+      }
+
+      if (notFound){ //if not found on the list (never set to false)
+        throw; //throws an exception
+      } else{ //found
+        return value_out; //returns associated value
+      }
+    }
+
     void HashMap::print() const{
       for(int i=0;i<bucket_count;i++){//will iterate through each bucket
         std::cout <<"Bucket: " << (i + 1) << ":";
