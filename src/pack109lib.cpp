@@ -924,7 +924,7 @@ struct FileStruct pack109::deserialize_file(vec bytes){
   return deserialized_file;
 }
 
-
+//SERIALZING THE REQUEST STRUCT ----------------------------------
 vec pack109::serialize(struct Request item){
   vec bytes;
   bytes.push_back(PACK109_M8);
@@ -945,6 +945,7 @@ vec pack109::serialize(struct Request item){
   return bytes;
 }
 
+//DESERIALZING THE REQUEST STRUCT ----------------------------------
 struct Request pack109::deserialize_request(vec bytes){
   if (bytes.size() < 11){ //making sure there is enough room for Request to be the key
     throw;
@@ -964,6 +965,28 @@ struct Request pack109::deserialize_request(vec bytes){
   struct Request deserialized_request = {file_name};
 
   return deserialized_request;
+}
+
+
+//SERIALZING THE STATUS STRUCT ----------------------------------
+vec pack109::serialize(struct Status item){
+  vec bytes;
+  bytes.push_back(PACK109_M8);
+  bytes.push_back(0x01); //1 KVP
+
+  //key is Status
+  vec status = serialize(string("Status"));
+  bytes.insert(end(bytes), begin(status), end(status));
+  //value is is an m8
+  bytes.push_back(PACK109_M8);
+  bytes.push_back(0x01); //1 KVP
+  //KVP 1 is "message"
+  vec messagek = serialize(string("message"));
+  bytes.insert(end(bytes), begin(messagek), end(messagek));
+  vec messagev = serialize(item.message);
+  bytes.insert(end(bytes), begin(messagev), end(messagev));
+
+  return bytes;
 }
 
 

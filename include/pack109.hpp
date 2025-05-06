@@ -41,6 +41,10 @@ struct Request{
   string name; //name of file
 };
 
+struct Status{
+  string message; //message of status
+};
+
 namespace pack109 {
 
   vec slice(const vec& bytes, int vbegin, int vend);
@@ -104,6 +108,10 @@ namespace pack109 {
   //Request
   vec serialize(struct Request item);
   struct Request deserialize_request(vec bytes);
+
+  //Status
+  vec serialize(struct Status item);
+  struct Status deseralize_status(vec bytes);
 
 }
 
