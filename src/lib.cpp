@@ -182,10 +182,10 @@
       int index = hash(prehash(key)); //Compute the bucket index
       KeyValuePair* kvp = contains(key); //finds the pointer to the Key Value Pair if it is in the HashSet
     
-      if (kvp != NULL) { //if it is in the HashSet, this will return true
-        kvp->setValue(value); //changes the existing value to a new value
+      if (kvp != NULL) { //if it is in the HashMap, this will return true
+        kvp->setValue(value); //changes the existing value (File) to a new value (new File)
         return false; //if already in the HM
-      } else{ //if it is not in the HashSet already
+      } else{ //if it is not in the HashMap already
         insertAtHead(array[index], new KeyValuePair(key, value)); // Insert at head of list
         element_count++; //Track how many elements we have
     
