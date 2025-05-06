@@ -66,8 +66,8 @@ int main( int argc, char *argv[] ) {
       /* If connection is established then start communicating */
 
       bzero(buffer,256);
-      n = read( newsockfd,buffer,255 ); //Question 5: message is read in buffer
-   
+      n = read( newsockfd,buffer,255 ); //Question 5: message is read in buffer 
+
       if (n < 0) {
          perror("ERROR reading from socket");
          exit(1);
@@ -76,8 +76,28 @@ int main( int argc, char *argv[] ) {
          comm = false;
          break;
       }
-   
-      printf("Here is the message: %s\n",buffer);
+
+      /*
+         The message is currently decrypted and serizalized, so must decrypt and deseralize
+      */
+      
+      //printf("Here is the message: %s\n",buffer);
+
+      //Question 6:
+      //storing the message as a File (vector of u8)
+      std::string buffer_str = buffer; //convert buffer into a string
+      File recieved; //File vector
+      for (u8 bytes : buffer_str){
+         recieved.push_back(bytes); //adds each byte onto the File vector
+      }
+
+      //decrypt message
+      File decrypted;
+      for (u8 bytes : recieved){
+         u8 decrypt = bytes ^ 42; //XOR by the key (42)
+         decrypted.push_back(decrypt);
+      }
+
       
 
       
