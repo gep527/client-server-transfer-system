@@ -104,13 +104,39 @@ int main( int argc, char *argv[] ) {
       int size_key = decrypted[3]; //where the size of the key is stored (make it an int to compare)
       if (size_key == 4){ //means that the key should be a File, will check in deserialization
          struct FileStruct file_deser = pack109::deserialize_file(decrypted); //creates a file struct
+         
+         //Question 8:
+         bool replace; //will track if file is replaced or not
+         replace = fileHM->insert(file_deser.name, file_deser.bytes); //inserting the File into the HM 
+
+         //seeing the type of status of the file
+         struct Status status_report; //stores the status message based on file status
+         try {
+            /*
+               - by calling get, it will find the File according to the key
+               - if it exist, it will continue through the try block
+               - if it does not exist, it will throw causing the catch block to execute
+            */
+            fileHM -> get(file_deser.name); 
+            if (replace){ //if replace = true, the file was not already in the HM
+               status_report = {.message = "Sucess! New file is stored."};
+            } else{ // replace = false, the file was already in HM
+               status_report = {.message = "Sucess! File was replaced."};
+            }
+         } catch (std::exception e){//file did not exist
+            status_report = {.message = "Failure! Can not store."};
+         }
+
+         
+
       } else if (size_key == 8){ //means that the key should be a Request, will check in deserialization
          struct Request request_deser = pack109::deserialize_request(decrypted); //creates a request struct
+
+
       } else{
          throw; //undentified
       }
 
-      
 
       
       /* Write a response to the client */
