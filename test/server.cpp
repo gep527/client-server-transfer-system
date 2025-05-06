@@ -60,23 +60,34 @@ int main( int argc, char *argv[] ) {
       exit(1);
    }
    
-   /* If connection is established then start communicating */
-   bzero(buffer,256);
-   n = read( newsockfd,buffer,255 );
+   bool comm = true; //tracks infinite loop of communication between client and server, will be set = fales when communication is ended 
+   while (comm){ //enters an infinite loop of communication
+
+      /* If connection is established then start communicating */
+
+      bzero(buffer,256);
+      n = read( newsockfd,buffer,255 ); //Question 5: message is read in buffer
    
-   if (n < 0) {
-      perror("ERROR reading from socket");
-      exit(1);
-   }
+      if (n < 0) {
+         perror("ERROR reading from socket");
+         exit(1);
+      } else if (n == 0){ //meaning nothing was read in
+         printf("Client is disconnected");
+         comm = false;
+         break;
+      }
    
-   printf("Here is the message: %s\n",buffer);
+      printf("Here is the message: %s\n",buffer);
+      
+
+      
+      /* Write a response to the client */
+      n = write(newsockfd,"I got your message",18);
    
-   /* Write a response to the client */
-   n = write(newsockfd,"I got your message",18);
-   
-   if (n < 0) {
-      perror("ERROR writing to socket");
-      exit(1);
+      if (n < 0) {
+         perror("ERROR writing to socket");
+         exit(1);
+      }
    }
       
    return 0;
