@@ -118,6 +118,7 @@ int main( int argc, char *argv[] ) {
                - if it does not exist, it will throw causing the catch block to execute
             */
             fileHM -> get(file_deser.name); 
+            //will get to this point if it exists
             if (replace){ //if replace = true, the file was not already in the HM
                status_report = {.message = "Sucess! New file is stored."};
             } else{ // replace = false, the file was already in HM
@@ -132,6 +133,21 @@ int main( int argc, char *argv[] ) {
       } else if (size_key == 8){ //means that the key should be a Request, will check in deserialization
          struct Request request_deser = pack109::deserialize_request(decrypted); //creates a request struct
 
+         //Question 9:
+         struct Status status_report; //stores the status message based on file status
+         struct FileStruct file_found;
+         try {
+            /*
+               - by calling get, it will find the File according to the key
+               - if it exist, it will continue through the try block
+               - if it does not exist, it will throw causing the catch block to execute
+            */
+            File file_found_value = fileHM -> get(request_deser.name); 
+            //will get to this point if it exists
+            file_found = {.name = request_deser.name, .bytes = file_found_value};
+         } catch (std::exception e){ //file did not exist
+            status_report = {.message = "Failure! File not found."};
+         }
 
       } else{
          throw; //undentified
