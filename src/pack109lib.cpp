@@ -945,6 +945,27 @@ vec pack109::serialize(struct Request item){
   return bytes;
 }
 
+struct Request pack109::deserialize_request(vec bytes){
+  if (bytes.size() < 11){ //making sure there is enough room for Request to be the key
+    throw;
+  }
+
+  vec request_slice = slice(bytes, 2, 10);
+  string request_string = deserialize_string(request_slice);
+  if (request_string != "Request"){
+    throw;
+  }
+
+  //file name
+  u8 file_name_len = bytes[20]; //assuming file name length is fewer than 256 which is safe to assume
+  vec file_namev = slice(bytes, 19, (19 + file_name_len + 1));
+  string file_name = deserialize_string(file_namev);
+
+  struct Request deserialized_request = {file_name};
+
+  return deserialized_request;
+}
+
 
 //PRINTING
 void pack109::printVec(vec &bytes) {
