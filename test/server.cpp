@@ -102,6 +102,9 @@ int main( int argc, char *argv[] ) {
 
       //Question 7:
       int size_key = decrypted[3]; //where the size of the key is stored (make it an int to compare)
+      string response; //will determine if a status response or file response is needed
+      struct Status status_report; //stores the status message based on file status
+      struct FileStruct file_found; //stores the file if requested and found
       if (size_key == 4){ //means that the key should be a File, will check in deserialization
          struct FileStruct file_deser = pack109::deserialize_file(decrypted); //creates a file struct
          
@@ -110,7 +113,6 @@ int main( int argc, char *argv[] ) {
          replace = fileHM->insert(file_deser.name, file_deser.bytes); //inserting the File into the HM 
 
          //seeing the type of status of the file
-         struct Status status_report; //stores the status message based on file status
          try {
             /*
                - by calling get, it will find the File according to the key
@@ -128,14 +130,12 @@ int main( int argc, char *argv[] ) {
             status_report = {.message = "Failure! Can not store."};
          }
 
-         
+         response = "status"; //status response is needed
 
       } else if (size_key == 8){ //means that the key should be a Request, will check in deserialization
          struct Request request_deser = pack109::deserialize_request(decrypted); //creates a request struct
 
          //Question 9:
-         struct Status status_report; //stores the status message based on file status
-         struct FileStruct file_found;
          try {
             /*
                - by calling get, it will find the File according to the key
@@ -145,8 +145,11 @@ int main( int argc, char *argv[] ) {
             File file_found_value = fileHM -> get(request_deser.name); 
             //will get to this point if it exists
             file_found = {.name = request_deser.name, .bytes = file_found_value};
+
+            response = "file"; //file response is needed
          } catch (std::exception e){ //file did not exist
             status_report = {.message = "Failure! File not found."};
+            response = "status"; //status response is needed
          }
 
       } else{
@@ -154,9 +157,25 @@ int main( int argc, char *argv[] ) {
       }
 
 
-      
-      /* Write a response to the client */
-      n = write(newsockfd,"I got your message",18);
+      /* Question 10: Write a response to the client */
+      File send_encrypt; //encrypted message to send to client
+      if (response == "status"){ //if status is the return message
+         File statusSer = pack109::serialize(status_report); //serializes status
+         //Encrypt
+         for (u8 bytes : statusSer){
+            u8 encrypt = bytes ^ 42; //XOR with key (42)
+            send_encrypt.push_back(encrypt);
+         }
+      } else{ //if file is return message
+         File fileSer = pack109::serialize(file_found); //serializes file
+         //Encrypt
+         for (u8 bytes : fileSer){
+            u8 encrypt = bytes ^ 42; //XOR with key (42)
+            send_encrypt.push_back(encrypt);
+         }
+      }
+
+      n = write(newsockfd,send_encrypt.data(), send_encrypt.size()); //will send the file encrypted back to the client
    
       if (n < 0) {
          perror("ERROR writing to socket");
