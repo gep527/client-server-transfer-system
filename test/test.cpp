@@ -65,6 +65,7 @@ int testName(string name1, string name2){
 
 int main(){
 
+  // FILE -------------------------------------------------------------------------------------------------------------------------------------
   cout << "Testing Ser and De for a File message (both tests should pass)" << endl;
   struct FileStruct file_hello = {.name =  "file.txt", .bytes = {'H', 'e', 'l', 'l', 'o'}};
   File hello_file = {0xae, 0x01, //map tag, 1 length
@@ -134,7 +135,28 @@ int main(){
     printResultName(file_helloDe_fail.name, file_hello.name);
   }
 
-  
+  cout << endl;
+  cout << "Testing Ser and De for a File message (both should fail, because the message is malformed)" << endl;
+  cout << "The way is is malformed is the serialization in bytes says that it should be a size of 3, but it should be a size of 5" << endl;
+  File file_fail = {0xae, 0x01, //map tag, 1 length
+                      0xaa, 0x04,  0x46, 0x69, 0x6C, 0x65,  //Key: string File
+                      0xae, 0x02, //Value is 2 KVPs 
+                      0xaa, 0x04, 0x6E, 0x61, 0x6D, 0x65, //Value: KVP1: Key : name
+                      0xaa, 0x08, 0x66, 0x69, 0x6C, 0x65, 0x2E, 0x74, 0x78, 0x74, //Value: KVP1: Value : file.txt
+                      0xaa, 0x05, 0x62, 0x79, 0x74, 0x65, 0x73, //Value: KVP 2: Key : bytes
+                      0xac, 0x03, 0xa2, 0x48, 0xa2, 0x65, 0xa2, 0x6C, 0xa2, 0x6C, 0xa2, 0x6F}; //Value: KVP 2: Value : Hello
+  cout << "Test 4: File ser" << endl;
+  if (testVec(fileSer, file_fail)){ //using previouse ser of correct struct with malformed serializied bytes array
+    cout << "Passed!" << endl;
+  } else{
+    cout << "Failed!" << endl;
+    for (int i = 0; i < fileSer.size(); i++){
+      if (fileSer[i] != file_fail[i]){
+        cout << "It should be: " << (int)fileSer[i] << " but malformed: " << (int)file_fail[i] << endl;
+      }
+    }
+  }
+
 
 
 
