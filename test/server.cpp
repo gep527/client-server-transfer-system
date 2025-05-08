@@ -61,6 +61,22 @@ int main( int argc, char *argv[] ) {
       perror("ERROR on accept");
       exit(1);
    }
+
+   /* 
+      Checking if user is using the persist flags
+   */
+
+   // std::string file_name; //if the persist flag, this will be the name of file 
+   // bool persist = false;//tracks if a user wants to persist
+   // if (argc == 4){ //meaning persist flag could be passed
+   //    if ((strcmp(argv[1], "--persist") == 0) && strcmp(argv[2],"-p") == 0){ //then persist is passed  
+   //       file_name = argv[3];
+   //       persist = true; 
+   //    }
+   // }
+
+   
+
    
    bool comm = true; //tracks infinite loop of communication between client and server, will be set = fales when communication is ended 
    while (comm){ //enters an infinite loop of communication
@@ -132,7 +148,7 @@ int main( int argc, char *argv[] ) {
 
       } else if (size_key == 7){ //means that the key should be a Request, will check in deserialization
          struct Request request_deser = pack109::deserialize_request(decrypted); //creates a request struct
-         
+
          //Question 9:
          try {
             /*
@@ -180,7 +196,12 @@ int main( int argc, char *argv[] ) {
          exit(1);
       }
    }
-      
+
+   /*
+      Write the HM onto a file so it can store it 
+   */
+   fileHM->write(); //will write HM info onto data.txt
+
    return 0;
 }
 
