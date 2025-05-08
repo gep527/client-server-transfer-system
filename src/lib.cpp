@@ -438,7 +438,7 @@
       }
 
       if (notFound){ //if not found on the list (never set to false)
-        throw; //throws an exception
+        throw std::runtime_error("Failure!"); //throws an exception
       } else{ //found
         return value_out; //returns associated value
       }

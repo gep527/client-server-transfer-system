@@ -83,8 +83,6 @@ int main( int argc, char *argv[] ) {
          The message is currently decrypted and serizalized, so must decrypt and deseralize
       */
       
-      //printf("Here is the message: %s\n",buffer);
-
       //Question 6:
       //storing the message as a File (vector of u8)
       std::string buffer_str = buffer; //convert buffer into a string
@@ -107,7 +105,7 @@ int main( int argc, char *argv[] ) {
       struct FileStruct file_found; //stores the file if requested and found
       if (size_key == 4){ //means that the key should be a File, will check in deserialization
          struct FileStruct file_deser = pack109::deserialize_file(decrypted); //creates a file struct
-         
+
          //Question 8:
          bool replace; //will track if file is replaced or not
          replace = fileHM->insert(file_deser.name, file_deser.bytes); //inserting the File into the HM 
@@ -132,9 +130,9 @@ int main( int argc, char *argv[] ) {
 
          response = "status"; //status response is needed
 
-      } else if (size_key == 8){ //means that the key should be a Request, will check in deserialization
+      } else if (size_key == 7){ //means that the key should be a Request, will check in deserialization
          struct Request request_deser = pack109::deserialize_request(decrypted); //creates a request struct
-
+         
          //Question 9:
          try {
             /*
@@ -148,7 +146,7 @@ int main( int argc, char *argv[] ) {
 
             response = "file"; //file response is needed
          } catch (std::exception e){ //file did not exist
-            status_report = {.message = "Failure! File not found."};
+            status_report = {.message = "File not found."};
             response = "status"; //status response is needed
          }
 

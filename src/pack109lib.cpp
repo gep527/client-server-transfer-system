@@ -916,7 +916,7 @@ struct FileStruct pack109::deserialize_file(vec bytes){
   int place = 16 + file_name_len + 1;
   place += 8; //skipping sting tag (1), length of bytes string (1), and chars that make up bytes (5), then get to tag 1+1+5=7+1 = 8
   u8 file_len = bytes[place + 1]; //assuming file is less than 256 
-  vec file_contentsv = slice(bytes, place, (place + file_len + 1));
+  vec file_contentsv = slice(bytes, place, (place + (file_len * 2) + 1)); //must do *2 because there is a tag in front of every byte
 
   std::vector<u8> file_bytes = deserialize_vec_u8(file_contentsv);
   struct FileStruct deserialized_file = {file_name, file_bytes};
