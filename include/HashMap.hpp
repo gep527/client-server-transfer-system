@@ -69,4 +69,6 @@ class HashMap {
 
     // Print the hash table (format is implementation-dependent)
     void print() const;
+
+    void write() const;
 };

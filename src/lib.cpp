@@ -4,7 +4,10 @@
 #include <cstdint>
 #include <cstring>
 #include "../include/HashMap.hpp"
+#include "../include/pack109.hpp"
 #include <vector>
+#include <iostream>
+#include <fstream>
 
     /*
       The `rehash` function resizes the hash table by creating a new array with a different number of buckets,
@@ -444,6 +447,38 @@
       }
     }
 
+
+    void HashMap::write() const{
+      vec bytes;
+      bytes.push_back(PACK109_M8); //adding HM tag
+      bytes.push_back(element_count); //adding number of elements
+
+      for (int i = 0; i < bucket_count; i++){ //will iterate through each bucket
+        Node* current = array[i]->head; //will find the LL at the bucket and set the current node equal to the head
+
+        while (current != NULL){ //iterates through a bucket (only care about non-empty ones)
+          KeyValuePair* pair = (KeyValuePair*)(current->item); //File struct
+          struct FileStruct file_temp = {.name = pair->getKey(), .bytes = pair->getValue()}; 
+          vec vec_serialized = pack109::serialize(file_temp); //serializing the struct
+          for (u8 byte : vec_serialized){
+            bytes.push_back(byte); //adding it to the bytes vec
+          }
+
+
+          current = current->next; //iterate through the LL 
+        }
+      }
+
+      std::ofstream my_file; //creats a file
+      my_file.open("../files/HMdata.txt"); //opens the file
+      for (u8 byte : bytes){
+        my_file << byte; //writes each byte onto the file
+      }
+      my_file.close(); //closes the file
+
+    }
+
+    
     void HashMap::print() const{
       for(int i=0;i<bucket_count;i++){//will iterate through each bucket
         std::cout <<"Bucket: " << (i + 1) << ":";
