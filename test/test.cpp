@@ -65,7 +65,7 @@ int testName(string name1, string name2){
 
 int main(){
 
-  // FILE -------------------------------------------------------------------------------------------------------------------------------------
+  // FILE - PASS -------------------------------------------------------------------------------------------------------------------------------------
   cout << "Testing Ser and De for a File message (both tests should pass)" << endl;
   struct FileStruct file_hello = {.name =  "file.txt", .bytes = {'H', 'e', 'l', 'l', 'o'}};
   File hello_file = {0xae, 0x01, //map tag, 1 length
@@ -107,11 +107,13 @@ int main(){
 
   cout << endl;
 
+  // FILE - Empty File name -------------------------------------------------------------------------------------------------------------------------------------
+ 
   cout << "Testing Ser and De for a File message (both should fail, because the file has an empty file name)" << endl;
   struct FileStruct file_no_name = {.name =  "", .bytes = {'H', 'e', 'l', 'l', 'o'}};
   File fileSer_fail = pack109::serialize(file_no_name);
   cout << "Test 3: File ser" << endl;
-  if (testVec(fileSer_fail, hello_file)){
+  if (testVec(fileSer_fail, hello_file)){ //using array of bytes above 
     cout << "Passed!" << endl;
   } else{
     cout << "Failed!" << endl;
@@ -136,6 +138,9 @@ int main(){
   }
 
   cout << endl;
+
+  // FILE - Malformed File -------------------------------------------------------------------------------------------------------------------------------------
+ 
   cout << "Testing Ser and De for a File message (both should fail, because the message is malformed)" << endl;
   cout << "The way is is malformed is the serialization in bytes says that it should be a size of 3, but it should be a size of 5" << endl;
   File file_fail = {0xae, 0x01, //map tag, 1 length
@@ -157,7 +162,35 @@ int main(){
     }
   }
 
+  // REQUEST - Pass -------------------------------------------------------------------------------------------------------------------------------------
+  cout << endl;
+  cout << "Testing Ser and De for a Request message (both tests should pass)" << endl;
+  struct Request file_request = {.name = "file.txt"};
+    File file_txt = {0xae, 0x01, //map tag, 1 length
+                    0xaa, 0x07,  0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, //Key: string Request
+                    0xae, 0x01, //Value is 1 KVPs 
+                    0xaa, 0x04, 0x6E, 0x61, 0x6D, 0x65, //Value: KVP1: Key : name
+                    0xaa, 0x08, 0x66, 0x69, 0x6C, 0x65, 0x2E, 0x74, 0x78, 0x74};
 
+    //serialize
+    File requestSer = pack109::serialize(file_request);
+    cout << "Test 5: Request ser" << endl;
+    if (testVec(requestSer, file_txt)){
+      cout << "Passed!" << endl;
+    } else{
+      cout << "Failed!" << endl;
+      printResultVec(requestSer, file_txt);
+    }
+
+    //deserialize
+    struct Request request_de = pack109::deserialize_request(requestSer);
+    cout << "Test 6: Request de" << endl;
+    file_de_name = testName(request_de.name, file_request.name); //testing the names to see if they are equal
+    if (file_de_name){
+      cout << "Passed!" << endl;
+    } else {
+      printResultName(request_de.name, file_request.name);
+    }
 
 
 
