@@ -8,8 +8,31 @@
 
 using namespace std;
 
-int testVec(vec lhs, vec rhs){
+//will print the two vectors, only will terminate if the test fails
+int printResultVec(vec lhs, vec rhs){
+  cout << "It is supposed to be:" << endl;
+  for (int i = 0; i < rhs.size(); i++){
+    cout << rhs[i];
+  }
+  cout << endl;
 
+  cout << "Yours is: " << endl;
+  for (int i = 0; i < lhs.size(); i++){
+    cout << lhs[i];
+  }
+  cout << endl;
+  return 0;
+}
+
+//will print the two names, only will terminate if the test fails
+int printResultName(string name1, string name2){
+  cout << "It is supposed to be" << name1 << endl;
+  cout << "Yours is " << name2 << endl;
+  return 0;
+}
+
+//will see if the two vectors are equal, and return a bool
+bool testVec(vec lhs, vec rhs){
   bool file_ser_match = true; //stores the result of comparison of bytes
   if (lhs.size() != rhs.size()){
     file_ser_match = false; //sets equal to false if they are not the same size
@@ -23,27 +46,26 @@ int testVec(vec lhs, vec rhs){
     }
   }
   
-  if (file_ser_match){
-    std::cout << "Passed!" << std::endl;
-  } else{
-    std::cout << "Failed!" << std:: endl;
-    std::cout << "It is supposed to be:" << std:: endl;
-    for (int i = 0; i < rhs.size(); i++){
-      std::cout << rhs[i];
-    }
-    std::cout << std::endl;
-    std::cout << "Yours is: " << std::endl;
-    for (int i = 0; i < lhs.size(); i++){
-      std::cout << lhs[i];
-    }
-    std::cout << std::endl;
-    exit(1);
+  if (file_ser_match){ //if they match, passed 
+    return true;
+  } else{ //if they do not match, failed
+    return false;
   }
-  return 0;
+}
+
+//will see if the two names are equal, and return a bool
+int testName(string name1, string name2){
+  bool file_match = true;
+  //checking names
+  if (name1 != name2){
+    file_match = false;
+  } 
+  return file_match;
 }
 
 int main(){
 
+  cout << "Testing Ser and De for a File message (both tests should pass)" << endl;
   struct FileStruct file_hello = {.name =  "file.txt", .bytes = {'H', 'e', 'l', 'l', 'o'}};
   File hello_file = {0xae, 0x01, //map tag, 1 length
                       0xaa, 0x04,  0x46, 0x69, 0x6C, 0x65,  //Key: string File
@@ -53,24 +75,34 @@ int main(){
                       0xaa, 0x05, 0x62, 0x79, 0x74, 0x65, 0x73, //Value: KVP 2: Key : bytes
                       0xac, 0x05, 0xa2, 0x48, 0xa2, 0x65, 0xa2, 0x6C, 0xa2, 0x6C, 0xa2, 0x6F}; //Value: KVP 2: Value : Hello
   File fileSer = pack109::serialize(file_hello);
-  std::cout << "Test 1: File ser" << std::endl;
-  testVec(fileSer, hello_file);
+  cout << "Test 1: File ser" << endl;
+  if (testVec(fileSer, hello_file)){
+    cout << "Passed!" << endl;
+  } else{
+    cout << "Failed!" << endl;
+    printResultVec(fileSer, hello_file);
+  }
 
+  //deserializing
   struct FileStruct file_helloDe = pack109::deserialize_file(fileSer);
 
-  std::cout << "Test 2: File de" << std::endl;
-  bool file_match = true;
-  //checking names
-  if (file_helloDe.name != file_hello.name){
-    std::cout << "Failed" << std::endl;
-    file_match = false;
-    std::cout << "It is supposed to be" << file_hello.name << std::endl;
-    std::cout << "Yours is " << file_helloDe.name << std::endl;
-  } else{
-    std::cout << "Passed!" << std::endl;
+  //printing results
+  cout << "Test 2: File de" << endl;
+  //finding results of both tests 
+  bool file_de_name = testName(file_helloDe.name, file_hello.name); //testing the names to see if they are equal
+  bool file_de_bytes = testVec(file_helloDe.bytes, file_hello.bytes); //testing the contents to see if they are equal
+  //printing resilts of both test
+  if (file_de_name && file_de_bytes){ //if they are both true
+    cout << "Passed!" << endl;
+  } else if (file_de_name){ //if name is true, bytes is not true
+    cout << "Failed!" << endl;
+    printResultVec(fileSer, hello_file);
+  } else if (file_de_bytes){ //if bytes are true, name is not
+    cout << "Failed!" << endl;
+    printResultName(file_helloDe.name, file_hello.name);
   }
-  //checking file contents
-  testVec(file_helloDe.bytes, file_hello.bytes);
+
+  cout << endl;
 
   return 0;
 }
