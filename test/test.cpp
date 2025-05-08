@@ -10,15 +10,15 @@ using namespace std;
 
 //will print the two vectors, only will terminate if the test fails
 int printResultVec(vec lhs, vec rhs){
-  cout << "It is supposed to be:" << endl;
+  cout << "lhs:" << endl;
   for (int i = 0; i < rhs.size(); i++){
-    cout << rhs[i];
+    cout << (char)rhs[i];
   }
   cout << endl;
 
-  cout << "Yours is: " << endl;
+  cout << "rhs: " << endl;
   for (int i = 0; i < lhs.size(); i++){
-    cout << lhs[i];
+    cout << (char)lhs[i];
   }
   cout << endl;
   return 0;
@@ -26,8 +26,8 @@ int printResultVec(vec lhs, vec rhs){
 
 //will print the two names, only will terminate if the test fails
 int printResultName(string name1, string name2){
-  cout << "It is supposed to be" << name1 << endl;
-  cout << "Yours is " << name2 << endl;
+  cout << "string 1: " << name1 << endl;
+  cout << "string 2: " << name2 << endl;
   return 0;
 }
 
@@ -89,8 +89,10 @@ int main(){
   //printing results
   cout << "Test 2: File de" << endl;
   //finding results of both tests 
+
   bool file_de_name = testName(file_helloDe.name, file_hello.name); //testing the names to see if they are equal
   bool file_de_bytes = testVec(file_helloDe.bytes, file_hello.bytes); //testing the contents to see if they are equal
+
   //printing resilts of both test
   if (file_de_name && file_de_bytes){ //if they are both true
     cout << "Passed!" << endl;
@@ -103,6 +105,39 @@ int main(){
   }
 
   cout << endl;
+
+  cout << "Testing Ser and De for a File message (both should fail, because the file has an empty file name)" << endl;
+  struct FileStruct file_no_name = {.name =  "", .bytes = {'H', 'e', 'l', 'l', 'o'}};
+  File fileSer_fail = pack109::serialize(file_no_name);
+  cout << "Test 3: File ser" << endl;
+  if (testVec(fileSer_fail, hello_file)){
+    cout << "Passed!" << endl;
+  } else{
+    cout << "Failed!" << endl;
+  }
+
+  struct FileStruct file_helloDe_fail = pack109::deserialize_file(fileSer_fail);
+  cout << "Test 4: File de" << endl;
+
+  //finding results of both tests 
+  file_de_name = testName(file_helloDe_fail.name, file_hello.name); //testing the names to see if they are equal
+  file_de_bytes = testVec(file_helloDe_fail.bytes, file_hello.bytes); //testing the contents to see if they are equal
+
+  //printing resilts of both test
+  if (file_de_name && file_de_bytes){ //if they are both true
+    cout << "Passed!" << endl;
+  } else if (file_de_name){ //if name is true, bytes is not true
+    cout << "Failed!" << endl;
+    printResultVec(fileSer, hello_file);
+  } else if (file_de_bytes){ //if bytes are true, name is not
+    cout << "Failed!" << endl;
+    printResultName(file_helloDe_fail.name, file_hello.name);
+  }
+
+  
+
+
+
 
   return 0;
 }
