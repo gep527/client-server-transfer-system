@@ -62,7 +62,7 @@ u8 pack109::deserialize_u8(vec bytes) {
   if (bytes[0] == PACK109_U8) {
     return bytes[1];
   } else {
-    throw;
+    throw std::runtime_error("Incorrect tag");
   }
 }
 
@@ -357,7 +357,7 @@ vec pack109::serialize(string item){
   vec bytes;
   if (item.size() <= 255){ //represents an 8 bit length string 
     bytes.push_back(PACK109_S8); //adding the tag
-    bytes.push_back((u8)item.size()); //size as 1 byte length
+    bytes.push_back((int)item.size()); //size as 1 byte length
   } else if (item.size() > 255 && item.size() <= 65535) { //represents an 16 bit length string 
     bytes.push_back(PACK109_S16); //adding the tag
 
@@ -389,7 +389,7 @@ vec pack109::serialize(string item){
 string pack109::deserialize_string(vec bytes){
   string result;
   if (bytes.size() < 2){ //includes tag and length 
-    throw; 
+    throw std::runtime_error("Incorrect size"); 
   }
   int len = 0; //the length of the string 
   int beg = 0; //short for beginning, tracks num of tags and length bytes
@@ -402,7 +402,7 @@ string pack109::deserialize_string(vec bytes){
     len = ((bytes[1] << 8) |(bytes[2])); //uses similar logic of attaing length as tehe deserialization process for ints
     beg = 3; //tag, length (2 bytes) = 3
   } else{ //invalid tag
-    throw;
+    throw std::runtime_error("Incorrect tag");
   }
 
   //checking length
@@ -446,6 +446,9 @@ std::vector<u8> pack109::deserialize_vec_u8(vec bytes){
   std::vector<u8> result;
 
   u8 tag = bytes[0]; //gets tag (first item
+  if (tag != PACK109_A8){
+    throw std::runtime_error("Incorrect tag");
+  }
   int len; //gets number of items in array
   int place; //tracks location of where index is 
   if (tag == PACK109_A8){
@@ -692,184 +695,6 @@ std::vector<string> pack109:: deserialize_vec_string(vec bytes){
   return result;
 }
 
-// vec pack109::serialize(struct Person item){
-//   vec bytes;
-//   bytes.push_back(PACK109_M8); //adding map tag
-//   bytes.push_back(0x01); //adds the size of the map (1)
-
-//   //Key Person
-//   bytes.push_back(PACK109_S8); //adding map tag
-//   bytes.push_back(0x06); //length of person
-//   bytes.push_back('P');
-//   bytes.push_back('e');
-//   bytes.push_back('r');
-//   bytes.push_back('s');
-//   bytes.push_back('o');
-//   bytes.push_back('n');
-
-//   //Value
-//   bytes.push_back(PACK109_M8); //another map 
-//   bytes.push_back(0x03); //adds the number of data members (3)
-
-//   //KV 1 = age
-//   bytes.push_back(PACK109_S8); //adding map tag
-//   bytes.push_back(0x03); //length of person
-//   bytes.push_back('a');
-//   bytes.push_back('g');
-//   bytes.push_back('e');
-
-//   bytes.push_back(0xa2);
-//   bytes.push_back(item.age); //calls the person struct to acess age
-  
-//   //KV 2 = height
-//   bytes.push_back(PACK109_S8); //adding map tag
-//   bytes.push_back(0x06); //length of person
-//   bytes.push_back('h');
-//   bytes.push_back('e');
-//   bytes.push_back('i');
-//   bytes.push_back('g');
-//   bytes.push_back('h');
-//   bytes.push_back('t');
-
-//   vec height_value = serialize(item.height); //calls the person struct to access height
-//   for (u8 byte : height_value){
-//     bytes.push_back(byte);
-//   }
-
-//   //KV 3 = name
-//   bytes.push_back(PACK109_S8); //adding map tag
-//   bytes.push_back(0x04); //length of person
-//   bytes.push_back('n');
-//   bytes.push_back('a');
-//   bytes.push_back('m');
-//   bytes.push_back('e');
-//   bytes.push_back(0xaa);
-//   string name_of_person_ser = item.name; //calls the person struct to access name
-//   bytes.push_back(name_of_person_ser.size());
-//   for (char c : name_of_person_ser){
-//     bytes.push_back((u8) c); //will cast the char into a byte
-//   }
-
-//   return bytes;
-// }
-
-// struct Person pack109:: deserialize_person(vec bytes){
-//   struct Person result;
-
-
-//   u8 tag = bytes[0]; //gets tag (first item
-//   int len; //gets number of items in array
-//   int place; //tracks location of where index is 
-//   if (tag == PACK109_M8){
-//     len = bytes[1]; //length takes up one byte
-//     place = 2;
-//   } else if (tag == PACK109_M16){
-//     len = (bytes[1] << 8 | bytes[2]); 
-//     place = 3;
-//   } else { //invalid tag
-//     throw;
-//   }
-
-
-//   if (bytes[place++] != PACK109_S8){ //assuring the byte is the string tag in the correct location
-//     throw;
-//   }
-
-//   //KEY - Person
-//   int len_key = bytes[place++]; //length of key string
-//   std::string key; //creating a temp string to add
-//   for (int i = 0; i < len_key; i++){
-//     key.push_back(bytes[place]);
-//     place++;
-//   }
-
-//   //VALUE - 3 Map KV pairs
-//   if (bytes[place++] != PACK109_M8){ //checking for correct map tag
-//     throw;
-//   }
-  
-//   int len_of_val = bytes[place++]; //get number of keyval pairs (should be 3)
-//   if (len_of_val != 3){ //age, height, name
-//     throw;
-//   }
-
-//   //AGE KV PAIR
-//   //KEY
-//   if (bytes[place++] != PACK109_S8){
-//     throw;
-//   }
-
-//   int len_age = bytes[place++];
-//   std::string age; //creating a temp for age
-//   for (int i = 0; i < len_age; i++){
-//     age.push_back(bytes[place]);
-//     place++;
-//   }
-
-//   //VAL
-//   if (bytes[place++] != PACK109_U8){
-//     throw;
-//   }
-//   result.age = bytes[place++]; //adding the age onto the result here (one byte so just the current index in bytes)
-
-//   //HEIGHT KV PAIR
-//   //KEY
-//   if (bytes[place++] != PACK109_S8){
-//     throw;
-//   }
-
-//   int len_height = bytes[place++];
-//   std::string height; //creating a temp string for height
-//   for (int i = 0; i < len_height; i++){
-//     height.push_back(bytes[place]);
-//     place++;
-//   }
-
-
-//   //VAL
-//   if (bytes[place++] != PACK109_F32){
-//     throw;
-//   }
-
-//   f32 height_float; //where the height will be stored
-//   u32 first = (bytes[place++] << 24);
-//   u32 second = (bytes[place++] << 16);
-//   u32 third = (bytes[place++]<< 8);
-//   u32 fourth = (bytes[place++]<< 0);
-//   u32 int_to_float = (first|second|third|fourth); //concatenates the result of the the bytes (other than tag)
-
-//   std::memcpy(&height_float, &int_to_float, sizeof(int_to_float)); //copies the specified number of bytes from one memory location to the other memory location regardless of the type of data stored
-//   result.height = height_float; //setting result value equal to the height derived
-
-//   //NAME KEY VALUE PAIR
-//   //KEY
-//   if (bytes[place++] != PACK109_S8){ //verifys string tag
-//     throw;
-//   }
-
-//   int len_name = bytes[place++];
-//   std::string name; //creating a temp string for name
-//   for (int i = 0; i < len_name; i++){
-//     height.push_back(bytes[place]);
-//     place++;
-//   }
-
-//   //VALUE
-//   if (bytes[place++] != PACK109_S8){
-//     throw;
-//   }
-
-//   int len_name_of_person = bytes[place++]; //getting length of the person's name
-//   std::string name_of_person; //creating temp for name of the person
-//   for (int i = 0; i < len_name_of_person; i++){
-//     name_of_person.push_back(bytes[place]);
-//     place++;
-//   }
-
-//   result.name = name_of_person; //setting result value equal to the name derived
-
-//   return result; 
-// }
 //SERIALZING THE FILE STRUCT ----------------------------------
 vec pack109::serialize(struct FileStruct item){
   vec bytes;
@@ -885,6 +710,7 @@ vec pack109::serialize(struct FileStruct item){
   vec namek = serialize(string("name"));
   bytes.insert(end(bytes), begin(namek), end(namek));
   vec namev = serialize(string(item.name));
+  namev[1] = (int)(namev[1]); //make sure size is an int
   bytes.insert(end(bytes), begin(namev), end(namev));
   //KVP 2 is "bytes"
   vec bytesk = serialize(string("bytes"));
@@ -898,13 +724,13 @@ vec pack109::serialize(struct FileStruct item){
 //DESERIALZING THE FILE STRUCT ----------------------------------
 struct FileStruct pack109::deserialize_file(vec bytes){
   if (bytes.size() < 8){ //making sure there is enough room for File to be the key
-    throw;
+    throw std::runtime_error("Incorrect size");
   }
 
   vec file_slice = slice(bytes, 2, 7);
   string file_string = deserialize_string(file_slice);
   if (file_string != "File"){
-    throw;
+    throw std::runtime_error("Not 'File'");
   }
 
   //file name
@@ -929,7 +755,6 @@ vec pack109::serialize(struct Request item){
   vec bytes;
   bytes.push_back(PACK109_M8);
   bytes.push_back(0x01); //1 KVP
-  //std::cout << bytes.size() << std::endl;
   //key is Request
   vec request = serialize(string("Request"));
   bytes.insert(end(bytes), begin(request), end(request));
@@ -948,13 +773,13 @@ vec pack109::serialize(struct Request item){
 //DESERIALZING THE REQUEST STRUCT ----------------------------------
 struct Request pack109::deserialize_request(vec bytes){
   if (bytes.size() < 11){ //making sure there is enough room for Request to be the key
-    throw;
+    throw std::runtime_error("Incorrect size");
   }
 
   vec request_slice = slice(bytes, 2, 10);
   string request_string = deserialize_string(request_slice);
   if (request_string != "Request"){
-    throw;
+    throw std::runtime_error("Not 'Request'");
   }
 
   //file name
@@ -992,13 +817,13 @@ vec pack109::serialize(struct Status item){
 //DESERIALZING THE STATUS STRUCT ----------------------------------
 struct Status pack109::deserialize_status(vec bytes){
   if (bytes.size() < 10){ //making sure there is enough room for Status to be the key
-    throw;
+    throw std::runtime_error("Incorrect size");
   }
 
   vec status_slice = slice(bytes, 2, 9);
   string status_string = deserialize_string(status_slice);
-  if (status_string != "Status"){
-    throw;
+  if (status_string != "Status"){ 
+    throw std::runtime_error("Not 'Status'");
   }
 
   //message
@@ -1010,7 +835,6 @@ struct Status pack109::deserialize_status(vec bytes){
 
   return deserialized;
 }
-
 
 //PRINTING
 void pack109::printVec(vec &bytes) {
