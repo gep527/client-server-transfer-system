@@ -143,7 +143,7 @@ int main(){
 
   // FILE - Malformed File -------------------------------------------------------------------------------------------------------------------------------------
  
-  cout << "Testing Ser  for a File message (ser should fail, because the message is malformed)" << endl;
+  cout << "Testing Ser for a File message (ser should fail, because the message is malformed)" << endl;
   cout << "The way it is malformed is the serialization in bytes says that it should be a size of 3, but it should be a size of 5" << endl;
   File file_fail = {0xae, 0x01, //map tag, 1 length
                       0xaa, 0x04,  0x46, 0x69, 0x6C, 0x65,  //Key: string File
@@ -219,7 +219,26 @@ int main(){
     cout << "Failed" << endl;
     printResultName(request_de_fail.name, file_request.name);
   }
+  cout << endl;
 
-
+  // FILE - Malformed Request -------------------------------------------------------------------------------------------------------------------------------------
+  cout << "Testing Ser for a Request message (ser should fail, because the message is malformed)" << endl;
+  cout << "The way it is malformed is the serialization is there is one less bit in the wrong_request" << endl;
+  File wrong_request = {0xae, 0x01, //map tag, 1 length
+                    0xaa, 0x07,  0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, //Key: string Request
+                    0xae, 0x01, //Value is 1 KVPs 
+                    0xaa, 0x04, 0x6E, 0x61, 0x6D, 0x65, //Value: KVP1: Key : name
+                    0xaa, 0x08, 0x66, 0x69, 0x6C, 0x65, 0x2E, 0x74, 0x78};
+  //serialize
+  cout << "Test 9: File ser" << endl;
+  if (testVec(requestSer, wrong_request)){ //using previouse ser of correct struct with malformed serializied bytes array
+    cout << "Passed!" << endl;
+  } else{
+    cout << "Failed!" << endl;
+    cout << "the correct size is: "  << requestSer.size() << endl;
+    cout << "the wrong size is: " << wrong_request.size() << endl;
+  }
+  cout << endl;
+  
   return 0;
 }
