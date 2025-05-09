@@ -271,5 +271,30 @@ int main(){
     cout << "It is actually: " << file_statusDe.message << endl;
   }
   cout << endl;
+
+  // Status - Empty Message -------------------------------------------------------------------------------------------------------------------------------------
+  //serialize
+  cout << "Testing Ser and De for a Status message (both should fail, because the Status has an empty message)" << endl;
+  struct Status status_message_wrong = {.message = ""};
+  File statusSer_wrong = pack109::serialize(status_message_wrong);
+
+  cout << "Test 12: File ser" << endl;
+  if (testVec(statusSer_wrong, status_message_ser)){
+    cout << "Passed!" << endl;
+  } else{
+    cout << "Failed!" << endl;
+  }
+
+  struct Status file_statusDe_wrong = pack109::deserialize_status(statusSer_wrong);
+  cout << "Test 13: File de" << endl;
+  //finding results of test
+  if (file_statusDe_wrong.message == status_message.message){
+    cout << "Passed!" << endl;
+  } else{
+    cout << "Failed!" << endl;
+    cout << "It is supposed to be: " << status_message.message << endl;
+    cout << "It is actually: " << file_statusDe_wrong.message << endl;
+  }
+  cout << endl;
   return 0;
 }
