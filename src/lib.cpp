@@ -182,6 +182,7 @@
     */
   
     bool HashMap:: insert(string key, File value) {
+      try {
       int index = hash(prehash(key)); //Compute the bucket index
       KeyValuePair* kvp = contains(key); //finds the pointer to the Key Value Pair if it is in the HashSet
     
@@ -196,7 +197,12 @@
           rehash(bucket_count * 2);
         }
       }
-      return true; //return if not already in HM
+
+      } catch (std::exception e){
+        std::cout << "could not add file to HM" << std::endl;
+        exit(1);
+      }
+      return true;//return if not already in HM
     }
     /*
     Suppose we insert value 42 and it hashes to bucket 3:
