@@ -240,5 +240,36 @@ int main(){
   }
   cout << endl;
   
+  // STATUS - PASS -------------------------------------------------------------------------------------------------------------------------------------
+  cout << "Testing Ser and De for a Status message (both tests should pass)" << endl;
+  struct Status status_message = {.message = "Sucess!"};
+  File status_message_ser = {0xae, 0x01, //map tag, 1 length
+                            0xaa, 0x06, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,  //Key: string Status
+                            0xae, 0x01, //Value is 2 KVPs 
+                            0xaa, 0x07, 0x6D, 0x65, 0x73, 0x73,0x61, 0x67, 0x65, //Value: KVP1: Key : message
+                           0xaa, 0x07, 0x53, 0x75, 0x63, 0x65, 0x73, 0x73, 0x21}; //Value: KVP 2: Value : Sucess!
+  //serialize
+  File statusSer = pack109::serialize(status_message);
+  cout << "Test 10: File ser" << endl;
+  if (testVec(statusSer, status_message_ser)){
+    cout << "Passed!" << endl;
+  } else{
+    cout << "Failed!" << endl;
+    printResultVec(statusSer, status_message_ser);
+  }
+
+  //deserializing
+  struct Status file_statusDe = pack109::deserialize_status(statusSer);
+  //printing results
+  cout << "Test 11: File de" << endl;
+  //finding results of test
+  if (file_statusDe.message == status_message.message){
+    cout << "Passed!" << endl;
+  } else{
+    cout << "Failed" << endl;
+    cout << "It is supposed to be: " << status_message.message << endl;
+    cout << "It is actually: " << file_statusDe.message << endl;
+  }
+  cout << endl;
   return 0;
 }
