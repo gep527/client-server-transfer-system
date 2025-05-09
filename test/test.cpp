@@ -153,7 +153,7 @@ int main(){
                       0xaa, 0x05, 0x62, 0x79, 0x74, 0x65, 0x73, //Value: KVP 2: Key : bytes
                       0xac, 0x03, 0xa2, 0x48, 0xa2, 0x65, 0xa2, 0x6C, 0xa2, 0x6C, 0xa2, 0x6F}; //Value: KVP 2: Value : Hello
   //serialize
-  cout << "Test 4: File ser" << endl;
+  cout << "Test 5: File ser" << endl;
   if (testVec(fileSer, file_fail)){ //using previouse ser of correct struct with malformed serializied bytes array
     cout << "Passed!" << endl;
   } else{
@@ -176,7 +176,7 @@ int main(){
 
     //serialize
     File requestSer = pack109::serialize(file_request);
-    cout << "Test 5: Request ser" << endl;
+    cout << "Test 6: Request ser" << endl;
     if (testVec(requestSer, file_txt)){
       cout << "Passed!" << endl;
     } else{
@@ -186,7 +186,7 @@ int main(){
 
     //deserialize
     struct Request request_de = pack109::deserialize_request(requestSer);
-    cout << "Test 6: Request de" << endl;
+    cout << "Test 7: Request de" << endl;
     file_de_name = testName(request_de.name, file_request.name); //testing the names to see if they are equal
     if (file_de_name){
       cout << "Passed!" << endl;
@@ -202,7 +202,7 @@ int main(){
 
   //serializing
   File request_ser_fail = pack109::serialize(request_no_name);
-  cout << "Test 7: Request ser" << endl;
+  cout << "Test 8: Request ser" << endl;
   if (testVec(request_ser_fail, file_txt)){ //using array of bytes above 
     cout << "Passed!" << endl;
   } else{
@@ -211,7 +211,7 @@ int main(){
 
   //deserializing
   struct Request request_de_fail = pack109::deserialize_request(request_ser_fail);
-  cout << "Test 8: Request de" << endl;
+  cout << "Test 9: Request de" << endl;
   file_de_name = testName(request_de_fail.name, file_request.name); //testing the names to see if they are equal
   if (file_de_name){
     cout << "Passed!" << endl;
@@ -230,7 +230,7 @@ int main(){
                     0xaa, 0x04, 0x6E, 0x61, 0x6D, 0x65, //Value: KVP1: Key : name
                     0xaa, 0x08, 0x66, 0x69, 0x6C, 0x65, 0x2E, 0x74, 0x78};
   //serialize
-  cout << "Test 9: File ser" << endl;
+  cout << "Test 10:Request ser" << endl;
   if (testVec(requestSer, wrong_request)){ //using previouse ser of correct struct with malformed serializied bytes array
     cout << "Passed!" << endl;
   } else{
@@ -250,7 +250,7 @@ int main(){
                            0xaa, 0x07, 0x53, 0x75, 0x63, 0x65, 0x73, 0x73, 0x21}; //Value: KVP 2: Value : Sucess!
   //serialize
   File statusSer = pack109::serialize(status_message);
-  cout << "Test 10: File ser" << endl;
+  cout << "Test 11: Status ser" << endl;
   if (testVec(statusSer, status_message_ser)){
     cout << "Passed!" << endl;
   } else{
@@ -261,7 +261,7 @@ int main(){
   //deserializing
   struct Status file_statusDe = pack109::deserialize_status(statusSer);
   //printing results
-  cout << "Test 11: File de" << endl;
+  cout << "Test 12: Status de" << endl;
   //finding results of test
   if (file_statusDe.message == status_message.message){
     cout << "Passed!" << endl;
@@ -278,7 +278,7 @@ int main(){
   struct Status status_message_wrong = {.message = ""};
   File statusSer_wrong = pack109::serialize(status_message_wrong);
 
-  cout << "Test 12: File ser" << endl;
+  cout << "Test 13: Status ser" << endl;
   if (testVec(statusSer_wrong, status_message_ser)){
     cout << "Passed!" << endl;
   } else{
@@ -286,7 +286,7 @@ int main(){
   }
 
   struct Status file_statusDe_wrong = pack109::deserialize_status(statusSer_wrong);
-  cout << "Test 13: File de" << endl;
+  cout << "Test 14: Status de" << endl;
   //finding results of test
   if (file_statusDe_wrong.message == status_message.message){
     cout << "Passed!" << endl;
@@ -296,5 +296,31 @@ int main(){
     cout << "It is actually: " << file_statusDe_wrong.message << endl;
   }
   cout << endl;
+
+  // Status - Malformed Message -------------------------------------------------------------------------------------------------------------------------------------
+  //serialize
+  cout << "Test 15: Status ser" << endl;
+  cout << "Testing Ser for a Status message (ser should fail, because the message is malformed)" << endl;
+  cout << "The way it is malformed is the serialization is there is a ? instead of a !" << endl;
+  File status_message_ser_wrong = {0xae, 0x01, //map tag, 1 length
+                            0xaa, 0x06, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,  //Key: string Status
+                            0xae, 0x01, //Value is 2 KVPs 
+                            0xaa, 0x07, 0x6D, 0x65, 0x73, 0x73,0x61, 0x67, 0x65, //Value: KVP1: Key : message
+                           0xaa, 0x07, 0x53, 0x75, 0x63, 0x65, 0x73, 0x73, 0x3F}; //Value: KVP 2: Value : Sucess!
+  //serialize
+  if (testVec(statusSer, status_message_ser_wrong)){ //using previouse ser of correct struct with malformed serializied bytes array
+    cout << "Passed!" << endl;
+  } else{
+    cout << "Failed!" << endl;
+    for (int i = 0; i < statusSer.size(); i++){
+      if (statusSer[i] != status_message_ser_wrong[i]){
+        cout << "The correct char is: " << (char)statusSer[i] << endl;
+        cout << "The actual char is " << (char)status_message_ser_wrong[i] << endl;
+      }
+    }
+  }
+  cout << endl;
+
+
   return 0;
 }
