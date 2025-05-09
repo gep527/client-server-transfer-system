@@ -45,7 +45,7 @@ int calculate_file_size(vec bytes, int position){
 int main( int argc, char *argv[] ) {
    int sockfd, newsockfd, portno;
    socklen_t clilen; //make it compatable for c++
-   char buffer[256];
+   char buffer[65536]; //for larger file sizes
    struct sockaddr_in serv_addr, cli_addr;
    int  n;
    
@@ -101,7 +101,10 @@ int main( int argc, char *argv[] ) {
          persist = true; 
       }
    }
-   std::cout << file_name << std::endl;
+   std::string file_dir = "../files/"; //file directory for where my files are located
+   for (char c: file_name){
+      file_dir.push_back(c);
+   }
    /* 
       Reading from file if flags are used
    */
@@ -110,7 +113,7 @@ int main( int argc, char *argv[] ) {
       //opens file and initalizing vars
       string file_text; //gets file contents line by line
       vec file_info; //will store each byte from the file
-      std::ifstream file("../files/HMdata.txt"); //opening file containing HM serialization
+      std::ifstream file(file_dir); //opening file containing HM serialization
       if (!file.is_open()){
          std::cerr << "Error Opening file"; //if file could not open
          exit(1);
@@ -132,6 +135,7 @@ int main( int argc, char *argv[] ) {
          exit(1);
       }
       
+      //initalizes
       int elements = file_info[place++]; //gets number of file structs in HM
       int start = place; //starting point of first File
       if (elements < 0){ //if there are no files
@@ -142,9 +146,7 @@ int main( int argc, char *argv[] ) {
       for (int i = 0; i < elements; i++){ //will loop through the number of files
 
          //will calculate the size of the file struct in order to slice it and deserialize
-         std::cout << "does it make it here? " << std::endl;
          int file_size = calculate_file_size(file_info, start); 
-         std::cout << "does it make it here? " << std::endl;
          if (start + file_size > file_info.size()){ //ensuring safe bounds
             std::cout << "Invalid bounds" << std::endl;
          }
@@ -157,18 +159,13 @@ int main( int argc, char *argv[] ) {
       } 
    }
 
-
-
-   fileHM->print();
-
-   
    bool comm = true; //tracks infinite loop of communication between client and server, will be set = fales when communication is ended 
    while (comm){ //enters an infinite loop of communication
 
       /* If connection is established then start communicating */
 
-      bzero(buffer,256);
-      n = read( newsockfd,buffer,255 ); //Question 5: message is read in buffer 
+      bzero(buffer,65535); //larger file sizes
+      n = read( newsockfd,buffer, 65535 ); //Question 5: message is read in buffer (updates for larger file sizes)
 
       if (n < 0) {
          perror("ERROR reading from socket");
@@ -284,9 +281,9 @@ int main( int argc, char *argv[] ) {
    /*
       Write the HM onto a file so it can store it 
    */
-   fileHM->print();
-   fileHM->write(); //will write HM info onto data.txt //Question 11
-   //fileHM->print();
+   if (persist){
+      fileHM->write(); //will write HM info onto data.txt //Question 11
+   }
 
    return 0;
 }
