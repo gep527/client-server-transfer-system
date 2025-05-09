@@ -467,6 +467,11 @@ Your submission should be organized, well-commented, and easy to understand. Rem
 
 Include a numbered list of websites and resources you used to complete this exam. The format of the Works Cited does not matter, just be consistent and provide all the information needed to find the cited information. Include a number-reference (e.g. `[1]`) to the citation as close to where the material is used in the exam. If the resource is web-based, a link is sufficient.
 
-[0]: https://studentaffairs.lehigh.edu/content/code-conduct
-[2]: http://crasseux.com/books/ctutorial/Building-a-library.html#Building%20a%20library
-[3]: https://support.zoom.us/hc/en-us/articles/201362473-Local-recording
+[1]:https://www.geeksforgeeks.org/vector-data-function-in-c-stl/ (used this to understand how to convert vector data over to server)
+[2]https://www.geeksforgeeks.org/exception-handling-c/ (used to understand how to use try/catch blocks in C++, used this in a lot of places but mostly when getting files for the status message)
+[3] https://www.programiz.com/c-programming/library-function/string.h/strcmp (used this to understand how to compare two strings, used this to check input flags)
+[4]https://www.w3schools.com/cpp/cpp_files.asp (used this to better understand opening/reading/writing to files)
+[5]https://cplusplus.com/forum/beginner/34808/ (used this to help better understand how to read from a file)
+[6]https://www.geeksforgeeks.org/how-to-read-from-a-file-in-cpp/ (also used this to better understand reading from a file)
+
+

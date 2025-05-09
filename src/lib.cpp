@@ -475,6 +475,7 @@
         }
       }
 
+      //used source 4 for this
       std::ofstream my_file; //creats a file
       my_file.open("../files/HMdata.txt"); //opens the file
       for (u8 byte : bytes){

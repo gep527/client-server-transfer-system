@@ -95,7 +95,7 @@ int main( int argc, char *argv[] ) {
    std::string file_name; //if the persist flag, this will be the name of file 
    bool persist = false;//tracks if a user wants to persist
    if (argc == 4){ //meaning persist flag could be passed
-      if ((strcmp(argv[1], "--persist") == 0) && strcmp(argv[2],"-p") == 0){ //then persist is passed  
+      if ((strcmp(argv[1], "--persist") == 0) && strcmp(argv[2],"-p") == 0){ //then persist is passed  //used source 3 for this
          file_name = argv[3];
          
          persist = true; 
@@ -113,6 +113,8 @@ int main( int argc, char *argv[] ) {
       //opens file and initalizing vars
       string file_text; //gets file contents line by line
       vec file_info; //will store each byte from the file
+
+      //used source 5 & 6 for this 
       std::ifstream file(file_dir); //opening file containing HM serialization
       if (!file.is_open()){
          std::cerr << "Error Opening file"; //if file could not open
@@ -208,7 +210,7 @@ int main( int argc, char *argv[] ) {
          replace = fileHM->insert(file_deser.name, file_deser.bytes); //inserting the File into the HM 
 
          //seeing the type of status of the file
-         try {
+         try {  //used source 2 for this 
             /*
                - by calling get, it will find the File according to the key
                - if it exist, it will continue through the try block
@@ -270,6 +272,7 @@ int main( int argc, char *argv[] ) {
          }
       }
 
+      //used source 1 for .data()
       n = write(newsockfd,send_encrypt.data(), send_encrypt.size()); //will send the file encrypted back to the client
    
       if (n < 0) {
