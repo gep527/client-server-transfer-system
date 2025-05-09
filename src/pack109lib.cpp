@@ -6,6 +6,7 @@
 using std::begin;
 using std::end;
 
+//taken from HW 4 soltutions
 vec pack109::slice(const vec& bytes, int vbegin, int vend) {
   if (vbegin < 0 || vend >= (int)bytes.size() || vbegin > vend) {
       throw std::out_of_range("slice: invalid indices. asked for slice(" + std::to_string(vbegin) + ", " + std::to_string(vend) + 
@@ -696,6 +697,7 @@ std::vector<string> pack109:: deserialize_vec_string(vec bytes){
 }
 
 //SERIALZING THE FILE STRUCT ----------------------------------
+//logic derived from HW4 soltutions
 vec pack109::serialize(struct FileStruct item){
   vec bytes;
   bytes.push_back(PACK109_M8);
@@ -722,6 +724,7 @@ vec pack109::serialize(struct FileStruct item){
 }
 
 //DESERIALZING THE FILE STRUCT ----------------------------------
+//logic derived from HW4 soltutions
 struct FileStruct pack109::deserialize_file(vec bytes){
   if (bytes.size() < 8){ //making sure there is enough room for File to be the key
     throw std::runtime_error("Incorrect size");
@@ -751,6 +754,7 @@ struct FileStruct pack109::deserialize_file(vec bytes){
 }
 
 //SERIALZING THE REQUEST STRUCT ----------------------------------
+//logic derived from HW4 soltutions
 vec pack109::serialize(struct Request item){
   vec bytes;
   bytes.push_back(PACK109_M8);
@@ -771,6 +775,7 @@ vec pack109::serialize(struct Request item){
 }
 
 //DESERIALZING THE REQUEST STRUCT ----------------------------------
+//logic derived from HW4 soltutions
 struct Request pack109::deserialize_request(vec bytes){
   if (bytes.size() < 11){ //making sure there is enough room for Request to be the key
     throw std::runtime_error("Incorrect size");
@@ -794,6 +799,7 @@ struct Request pack109::deserialize_request(vec bytes){
 
 
 //SERIALZING THE STATUS STRUCT ----------------------------------
+//logic derived from HW4 soltutions
 vec pack109::serialize(struct Status item){
   vec bytes;
   bytes.push_back(PACK109_M8);
@@ -815,6 +821,7 @@ vec pack109::serialize(struct Status item){
 }
 
 //DESERIALZING THE STATUS STRUCT ----------------------------------
+//logic derived from HW4 soltutions
 struct Status pack109::deserialize_status(vec bytes){
   if (bytes.size() < 10){ //making sure there is enough room for Status to be the key
     throw std::runtime_error("Incorrect size");

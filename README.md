@@ -473,5 +473,9 @@ Include a numbered list of websites and resources you used to complete this exam
 [4]https://www.w3schools.com/cpp/cpp_files.asp (used this to better understand opening/reading/writing to files)
 [5]https://cplusplus.com/forum/beginner/34808/ (used this to help better understand how to read from a file)
 [6]https://www.geeksforgeeks.org/how-to-read-from-a-file-in-cpp/ (also used this to better understand reading from a file)
+[7]https://www.ascii-code.com (used this to help me for testing purposes)
+[8]Used my old Midterm 2, which included the soltions from HW 2, and my HW 3 (to help me with HashMap)
+[9]Used HW4 solutions to better help with desrialization
+[10]Used server file from Recitation that was provided 
 
 

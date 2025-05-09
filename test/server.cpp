@@ -31,7 +31,7 @@ int calculate_file_size(vec bytes, int position){
    */
    try {
       size += 16; //skips over File name and key
-      size += bytes[position + size];
+      size += bytes[position + size]; //gets file name length
       size += 9; //skips over byte key
       size += 2 * (bytes[position + size]); //gets and adds the size of the file (multiplies 2 because there is a tag infront of every byte)
    } catch (std::exception e){ //cathing if this fails at any point
