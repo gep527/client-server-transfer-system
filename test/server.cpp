@@ -16,6 +16,29 @@
 #include "../include/pack109.hpp"
 #include <vector>
 
+//calculates the file size of a specific file struct so that it can be extracted from the file 
+int calculate_file_size(vec bytes, int position){
+   int size = 1; //accounting for the tag
+   if (bytes[position + size] != PACK109_M8){
+      throw std::runtime_error("Failure!");
+   }
+
+   /*
+      While this does include a try, catch block, it does not fully check for specifc errors
+      However, the specific errors (correct tags and names) will be checked in deserialization
+   */
+   try {
+      size += 16; //skips over File name and key
+      size += bytes[position + size];
+      size += 9; //skips over byte key
+      size += 2 * (bytes[position + size]); //gets and adds the size of the file (multiplies 2 because there is a tag infront of every byte)
+   } catch (std::exception e){ //cathing if this fails at any point
+      std::cout << "Size mismatch error" << std::endl;
+      exit(1);
+   }
+
+   return size;
+}
 int main( int argc, char *argv[] ) {
    int sockfd, newsockfd, portno;
    socklen_t clilen; //make it compatable for c++
@@ -200,7 +223,7 @@ int main( int argc, char *argv[] ) {
    /*
       Write the HM onto a file so it can store it 
    */
-   fileHM->write(); //will write HM info onto data.txt
+   fileHM->write(); //will write HM info onto data.txt //Question 11
 
    return 0;
 }
