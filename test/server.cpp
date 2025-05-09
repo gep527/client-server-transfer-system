@@ -15,11 +15,13 @@
 #include "../include/HashMap.hpp"
 #include "../include/pack109.hpp"
 #include <vector>
+#include <fstream>
 
 //calculates the file size of a specific file struct so that it can be extracted from the file 
 int calculate_file_size(vec bytes, int position){
-   int size = 1; //accounting for the tag
-   if (bytes[position + size] != PACK109_M8){
+   int size = 0; //keeps track of file struct size
+   if (bytes[position + size++] != PACK109_M8){ //checks tag
+      std::cout << bytes[position + size];
       throw std::runtime_error("Failure!");
    }
 
@@ -37,8 +39,9 @@ int calculate_file_size(vec bytes, int position){
       exit(1);
    }
 
-   return size;
+   return size; //size of file struct
 }
+
 int main( int argc, char *argv[] ) {
    int sockfd, newsockfd, portno;
    socklen_t clilen; //make it compatable for c++
@@ -89,16 +92,74 @@ int main( int argc, char *argv[] ) {
       Checking if user is using the persist flags
    */
 
-   // std::string file_name; //if the persist flag, this will be the name of file 
-   // bool persist = false;//tracks if a user wants to persist
-   // if (argc == 4){ //meaning persist flag could be passed
-   //    if ((strcmp(argv[1], "--persist") == 0) && strcmp(argv[2],"-p") == 0){ //then persist is passed  
-   //       file_name = argv[3];
-   //       persist = true; 
-   //    }
-   // }
+   std::string file_name; //if the persist flag, this will be the name of file 
+   bool persist = false;//tracks if a user wants to persist
+   if (argc == 4){ //meaning persist flag could be passed
+      if ((strcmp(argv[1], "--persist") == 0) && strcmp(argv[2],"-p") == 0){ //then persist is passed  
+         file_name = argv[3];
+         
+         persist = true; 
+      }
+   }
+   std::cout << file_name << std::endl;
+   /* 
+      Reading from file if flags are used
+   */
+   if (persist){ //if uses flags
+      
+      //opens file and initalizing vars
+      string file_text; //gets file contents line by line
+      vec file_info; //will store each byte from the file
+      std::ifstream file("../files/HMdata.txt"); //opening file containing HM serialization
+      if (!file.is_open()){
+         std::cerr << "Error Opening file"; //if file could not open
+         exit(1);
+      }
 
-   
+      //adding bytes onto file_info
+      while(getline(file, file_text)){ //goes through the file
+         for (char c : file_text){
+            file_info.push_back(c); //adds each byte onto the vector
+         }
+      }
+
+      /* 
+         Must extract file structs from the file in order to add them, so deserializing the file
+      */
+      int place = 0; //tracks location in the file_info vec
+      if (file_info[place++] != PACK109_M8){ //ensures first bit is the HM tag
+         std::cout << "Wrong Tag" << std::endl;
+         exit(1);
+      }
+      
+      int elements = file_info[place++]; //gets number of file structs in HM
+      int start = place; //starting point of first File
+      if (elements < 0){ //if there are no files
+         std::cout << "No Files from disk to add to HM" << std::endl;
+         exit(1);
+      }
+
+      for (int i = 0; i < elements; i++){ //will loop through the number of files
+
+         //will calculate the size of the file struct in order to slice it and deserialize
+         std::cout << "does it make it here? " << std::endl;
+         int file_size = calculate_file_size(file_info, start); 
+         std::cout << "does it make it here? " << std::endl;
+         if (start + file_size > file_info.size()){ //ensuring safe bounds
+            std::cout << "Invalid bounds" << std::endl;
+         }
+
+         vec file_temp = pack109::slice(file_info, start, (start + file_size)); //slices file struct 
+         struct FileStruct file_to_add = pack109::deserialize_file(file_temp); //deserializes
+         fileHM->insert(file_to_add.name, file_to_add.bytes); //inserts file into HM
+
+         start += file_size + 1; //adds file struct length and moves to next bit
+      } 
+   }
+
+
+
+   fileHM->print();
 
    
    bool comm = true; //tracks infinite loop of communication between client and server, will be set = fales when communication is ended 
@@ -223,7 +284,9 @@ int main( int argc, char *argv[] ) {
    /*
       Write the HM onto a file so it can store it 
    */
+   fileHM->print();
    fileHM->write(); //will write HM info onto data.txt //Question 11
+   //fileHM->print();
 
    return 0;
 }
