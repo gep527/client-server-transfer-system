@@ -444,7 +444,7 @@ You can use Zoom to do this, [here is a link][3] to some instructions. You don't
 
 **⚠️IMPORTANT: Make sure you give blanket permission to the link holder to view the file**
 
-🎥 Paste Recording Link(s) Here:
+🎥 Paste Recording Link(s) Here: https://drive.google.com/file/d/1hNvGXD0PbwUzTiCyQaZ5R5OFuYFQn3rb/view?usp=sharing
 
 ## Submission
 

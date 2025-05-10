@@ -131,6 +131,11 @@ int main( int argc, char *argv[] ) {
       /* 
          Must extract file structs from the file in order to add them, so deserializing the file
       */
+      bool empty = false;
+      if (file_info.size() < 1){
+         empty = true;
+         std::cout << "EMPTY FILE" << std::endl; //checking if file is empty first 
+      } else {
       int place = 0; //tracks location in the file_info vec
       if (file_info[place++] != PACK109_M8){ //ensures first bit is the HM tag
          std::cout << "Wrong Tag" << std::endl;
@@ -159,6 +164,7 @@ int main( int argc, char *argv[] ) {
 
          start += file_size + 1; //adds file struct length and moves to next bit
       } 
+      }
    }
 
    bool comm = true; //tracks infinite loop of communication between client and server, will be set = fales when communication is ended 
