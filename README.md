@@ -12,7 +12,7 @@ A client-server file sharing system with custom serialization protocol and encry
 
 ## Project Structure
 ```
-your-project/
+client-server-transfer-system/
 ├── include/
 │   ├── HashMap.hpp
 │   ├── KeyValuePair.hpp
