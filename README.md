@@ -11,6 +11,7 @@ A client-server file sharing system with custom serialization protocol and encry
 - **File Operations**: Send, request, and manage files
 
 ## Project Structure
+```
 your-project/
 ├── include/
 │   ├── HashMap.hpp
@@ -33,3 +34,4 @@ your-project/
 ├── Makefile
 ├── .gitignore
 └── README.md
+```
