@@ -1,0 +1,194 @@
+#include <cstdlib> 
+#include <iostream>
+#include <cstring>
+#include <chrono>
+#include "../include/HashMap.hpp"
+#include <vector>
+#include "../include/pack109.hpp"
+
+using namespace std;
+
+int testVec(vec lhs, vec rhs){
+
+  bool file_ser_match = true; //stores the result of comparison of bytes
+  if (lhs.size() != rhs.size()){
+    file_ser_match = false; //sets equal to false if they are not the same size
+  }
+
+  if (file_ser_match){ //will only execite if they are the same size
+    for (int i = 0; i < lhs.size(); i++){
+      if (lhs[i] != rhs[i]){
+        file_ser_match = false; //if values are not equal, will set equal to false
+      }
+    }
+  }
+  
+  if (file_ser_match){
+    std::cout << "Passed!" << std::endl;
+  } else{
+    std::cout << "Failed!" << std:: endl;
+    std::cout << "It is supposed to be:" << std:: endl;
+    for (int i = 0; i < rhs.size(); i++){
+      std::cout << rhs[i];
+    }
+    std::cout << std::endl;
+    std::cout << "Yours is: " << std::endl;
+    for (int i = 0; i < lhs.size(); i++){
+      std::cout << lhs[i];
+    }
+    std::cout << std::endl;
+    exit(1);
+  }
+  return 0;
+}
+
+int main(){
+
+    //HashMap* files = new HashMap(20); //creating HM of size 20
+
+    // cout << "TESTING INSERT" << endl;
+    // cout << "-----------------------------------------" << endl;
+    // //initalizing KeyValuePairs
+    // File v1{0x42, 0x6F, 0x62};
+    // File v2{0x45, 0x45, 0x46};
+    // File v3{0x47, 0x48, 0x49};
+    // File v4{0x50,0x51,0x52};
+    // File v5{0x53,0x54,0x55};
+    // File v6{0x56,0x57,0x58};
+    // File v7{0x59,0x60,0x61};
+    // File v8{0x62,0x63,0x64};
+    // KeyValuePair kvp1("Gwenn", v1); 
+    // KeyValuePair kvp2("Sofia", v2);
+    // KeyValuePair kvp3("Andrew", v3);
+    // KeyValuePair kvp6("Kate", v6); 
+    // KeyValuePair kvp7("Carly", v7);
+    // KeyValuePair kvp8("Ali", v8);
+
+
+    // KeyValuePair kvp4("Ariella", v4);
+    // KeyValuePair kvp5("Tim", v5);
+
+    // cout << "Before insert:" << endl;
+    // hm->print();
+ 
+    // //Inserting values
+    // hm->insert(kvp1.getKey(), kvp1.getValue());
+    // hm->insert(kvp2.getKey(), kvp2.getValue());
+    // hm->insert(kvp3.getKey(), kvp3.getValue());
+    // hm->insert(kvp6.getKey(), kvp6.getValue());
+    // hm->insert(kvp7.getKey(), kvp7.getValue());
+    // hm->insert(kvp8.getKey(), kvp8.getValue());
+
+    // //Printing List
+    // cout<< "After Insert:" << endl;
+    // hm->print();
+
+    // File v10 = hm->get("Gwenn");
+    // cout << "The value shoudl be Bob. The actual value is: ";
+    // for (u8 byte : v10){
+    //     cout << byte;
+    // }
+
+    //HashMap* files = new HashMap(20); //where all the files are stored
+
+    struct FileStruct file_hello = {.name =  "file.txt", .bytes = {'H', 'e', 'l', 'l', 'o'}};
+    File hello_file = {0xae, 0x01, //map tag, 1 length
+                       0xaa, 0x04,  0x46, 0x69, 0x6C, 0x65,  //Key: string File
+                       0xae, 0x02, //Value is 2 KVPs 
+                       0xaa, 0x04, 0x6E, 0x61, 0x6D, 0x65, //Value: KVP1: Key : name
+                       0xaa, 0x08, 0x66, 0x69, 0x6C, 0x65, 0x2E, 0x74, 0x78, 0x74, //Value: KVP1: Value : file.txt
+                       0xaa, 0x05, 0x62, 0x79, 0x74, 0x65, 0x73, //Value: KVP 2: Key : bytes
+                       0xac, 0x05, 0xa2, 0x48, 0xa2, 0x65, 0xa2, 0x6C, 0xa2, 0x6C, 0xa2, 0x6F}; //Value: KVP 2: Value : Hello
+    File fileSer = pack109::serialize(file_hello);
+    std::cout << "Test 1: File ser" << std::endl;
+    testVec(fileSer, hello_file);
+
+    struct FileStruct file_helloDe = pack109::deserialize_file(fileSer);
+
+    std::cout << "Test 2: File de" << std::endl;
+    bool file_match = true;
+    //checking names
+    if (file_helloDe.name != file_hello.name){
+      std::cout << "Failed" << std::endl;
+      file_match = false;
+      std::cout << "It is supposed to be" << file_hello.name << std::endl;
+      std::cout << "Yours is " << file_helloDe.name << std::endl;
+    } else{
+      std::cout << "Passed!" << std::endl;
+    }
+    //checking file contents
+    testVec(file_helloDe.bytes, file_hello.bytes);
+    
+
+
+
+
+
+
+
+
+
+    // struct Request file_request = {.name = "file.txt"};
+    // File hello = {0xae, 0x01, //map tag, 1 length
+    //                    0xaa, 0x07,  0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, //Key: string Request
+    //                    0xae, 0x01, //Value is 1 KVPs 
+    //                    0xaa, 0x04, 0x6E, 0x61, 0x6D, 0x65, //Value: KVP1: Key : name
+    //                    0xaa, 0x08, 0x66, 0x69, 0x6C, 0x65, 0x2E, 0x74, 0x78, 0x74};
+    // File fileSer = pack109::serialize(file_request);
+
+    // struct Request request_de = pack109::deserialize_request(fileSer);
+    // bool match = true;
+    // if (file_request.name == request_de.name){
+    //     std::cout << match << std::endl;
+    // } else{
+    //     std::cout << match << std::endl;
+    // }
+
+
+    // struct Status file_request = {.message = "saved"};
+    // File hello = {0xae, 0x01, //map tag, 1 length
+    //                    0xaa, 0x06,  0x53, 0x74, 0x61, 0x74, 0x75, 0x73, //Key: string Status
+    //                    0xae, 0x01, //Value is 1 KVPs 
+    //                    0xaa, 0x07, 0x6D, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, //Value: KVP1: Key : message
+    //                    0xaa, 0x05, 0x73, 0x61, 0x76, 0x65, 0x64};
+    // File fileSer = pack109::serialize(file_request);
+
+    // struct Status request_de = pack109::deserialize_status(fileSer);
+    // bool match = true;
+    // if (file_request.message == request_de.message){
+    //     std::cout << "TRUE: match" << std::endl;
+    // } else{
+    //     std::cout << match << std::endl;
+    // }
+
+
+
+    // bool match = true;
+    // if (hello.size() != fileSer.size()){
+    //     match = false;
+    // }
+
+    // if (match){
+    //     for (int i = 0; i < fileSer.size(); i++){
+    //         if (hello[i] != fileSer[i]){
+    //             match = false;
+    //             std::cout << i << std::endl;
+    //             std::cout << fileSer[i] << std::endl;
+    //             std::cout << (char)hello[i] << std::endl;
+    //         }
+    //     }
+    // }
+    // std::cout << match << std::endl;
+    
+
+    // HashMap* files = new HashMap(20); //where all the files are stored
+    // cout << "Before insert:" << endl;
+    // files->print();
+    // struct FileStruct file_hello = {.name = "file.txt", .bytes = {'H', 'e', 'l', 'l', 'o'}}; 
+    // files->insert(file_hello.name, file_hello.bytes);
+
+    // cout << "After insert:" << endl;
+    // files->print();
+
+    return 0;
+}

@@ -1,6 +1,6 @@
 #include <cstddef>
-#include "../include/KeyValuePair.hpp"
-#include "./linkedlist.hpp"
+#include "KeyValuePair.hpp"
+#include "linkedlist.hpp"
 #include <cstring>
 #include <vector>
 

@@ -1,0 +1,25 @@
+# .gitignore
+# Build directories
+bin/
+build/
+*.o
+
+# Compiled files
+*.exe
+*.out
+*.app
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+*.swp
+*.swo
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
